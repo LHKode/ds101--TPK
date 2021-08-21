@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Exercise 06 - Data Science 101</title>
+    <link rel="stylesheet" href="css/style.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.2/styles/solarized-dark.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.2/highlight.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.2/languages/python.min.js"></script>
+</head>
+<body id="top">
+<header>
+    <h1>Exercise 06</h1>
+    <p class="author">Data Science 101<br />November 2020
+    </p>
+</header>
+<div class="abstract">
+    <p>
+        Trong bài tập này chúng ta thử giải quyết bài toán liên quan đến âm thanh, mà cụ thể là chúng ta sẽ giúp máy tính nhận biết được các voice command khác
+        nhau của người dùng. Thông qua đó chúng ta sẽ thử làm quen với RNNs và các biến thể của nó.
+    </p>
+</div>
+<main>
+    <article>
+        <h2 id="getting-started">Lời Mở Đầu</h2>
+        <p>
+            Thử nghĩ xem nếu căn nhà của bạn trở nên thông minh và hiểu được những khẩu lệnh của bạn thì sẽ thú vị biết bao. Chúng ta chẳng cần phải
+            cần 1 cái remote controller ở bên mình mà vẫn ra lệnh cho các thiết bị điện tử. Các bạn có thể làm được ứng dụng như thế đó. Trước tiên,
+            bạn hãy thử nghiệm ý tưởng với bài tập này nhé. Cụ thể bạn phải huấn luyện máy tính để nó có thể phân loại các voice command khác nhau bao gồm:
+            <code>yes</code>, <code>no</code>, <code>left</code>, <code>right</code>, <code>up</code>, <code>down</code>,
+            <code>stop</code>, <code>go</code>, <code>on</code>, <code>off</code>.
+        </p>
+        <h2 id="dataset">Dataset</h2>
+        <p>
+            Rất may, bạn đã có dataset được label sẵn các đoạn âm thanh dài 1 giây. Dataset gốc nằm
+            <a href="https://www.kaggle.com/c/tensorflow-speech-recognition-challenge/data">ở đây</a>. Đây là dataset dùng trong 1 cuộc thi do
+            Google Brain tổ chức. Giải thưởng tiền mặt lên tới $25,000 USD. Rất tiếc cuộc thi đã qua rồi!!!
+            Để tiện thực nghiệm, giáo viên hướng dẫn đã chia dữ liệu sẵn thành 2 tập train và validation.
+            Các bạn có thể download <a href="https://drive.google.com/file/d/1SRMvQDWGZ0rJW4tBhf4WvvjtDInNb3d6/view?usp=sharing">tại đây</a>.
+            Và hãy nhớ rằng dành thời gian để tìm hiểu kĩ dataset trước khi làm việc nhé!
+        </p>
+        <h2 id="models">Thư Viện Audio</h2>
+        <p>
+            Để đọc được file âm thanh, bạn hãy dùng thư viện <code>soundfile</code>. Để cài đặt trên Google Colab, bạn hãy chạy câu lệnh sau:
+        </p>
+        <pre>
+            <code class="python hljs">
+    !pip install soundfile
+            </code>
+        </pre>
+        <p>
+            Âm thanh bản chất là 1 chuỗi các cao độ rung động của âm thanh. Do đó khi load file âm thanh, nó sẽ trả về 1 array 1 chiều chứa các số thực.
+            Ngoài ra, nó sẽ trả về thông số <code>sample rate</code> cho biết có bao nhiêu giá trị trong 1 giây. Ví dụ như sau:
+        </p>
+        <pre>
+            <code class="python hljs">
+    import soundfile as sf
+    x, sample_rate = sf.read('file.wav', dtype='float32')
+            </code>
+        </pre>
+        <p>
+            Một số nghiên cứu cho rằng não người xử lý âm thanh rất khác, não người phân tích tín hiệu ở miền tần số. Do đó, chúng ta có thể tiền xử lý âm thành,
+            chuyển chúng về miền tần số trước khi đưa vào mạng neuron. Ví dụ, ta có thể chuyển về miền tần số Short-time Fourier transform (STFT) như dưới đây,
+            trong đó 2048 là phân đoạn (segment) để chạy Fourier transform và 512 là khoảng cách giữa 2 phân đoạn (segment):
+        </p>
+        <pre>
+            <code class="python hljs">
+    import librosa
+    x_db = librosa.amplitude_to_db(np.abs(librosa.stft(x, 2048, 512)))
+            </code>
+        </pre>
+        <p>
+            Ngoài ra, JupyterHub còn cho phép phát âm thanh để chúng ta dễ dàng kiểm tra và thử nghiệm. Cách làm như sau:
+        </p>
+        <pre>
+            <code class="python hljs">
+    import IPython.display as ipd
+    ipd.Audio(x, rate=sample_rate)
+            </code>
+        </pre>
+        <h2 id="github">Audio Augmentation</h2>
+        <p>
+            Tương tự như những dạng data khác, nếu chúng ta làm giàu data thêm nữa sẽ giúp model perform tốt hơn. Trong audio có 1 số kiểu làm giàu cơ bản như:
+            tăng cao độ, kéo dãn thời gian, dịch chuyển thời gian, thêm background noise. Rất may, chúng ta đã có thư viện <code>audiomentations</code>
+            viết sẵn để chúng ta dùng. Để cài đặt, ta làm như sau:
+        <pre>
+            <code class="python hljs">
+    !pip install audiomentations
+            </code>
+        </pre>
+            Tương tự như thư viện <code>imgaug</code> cho image augmentation, bạn có thể xem ví dụ sau đây, trong đó tham số <code>p</code> dùng để chỉ
+        xác xuất để apply phép biến đổi đó :
+        </p>
+        <pre>
+            <code class="python hljs">
+    from audiomentations import Compose, TimeStretch, Shift, PitchShift
+    augment = Compose([
+        TimeStretch(min_rate=0.6, max_rate=1.4, leave_length_unchanged=False, p=0.2),
+        PitchShift(min_semitones=-2, max_semitones=2, p=0.2),
+        Shift(min_fraction=-0.2, max_fraction=0.2, rollover=False, p=0.2),
+        AddBackgroundNoise(background_noise_dir, min_snr_in_db=3, max_snr_in_db=30, p=0.2)
+    ])
+    x, sr = sf.read(filename, dtype='float32')
+    x_aug = self.augment(x, sr)
+            </code>
+        </pre>
+        <h2 id="exam">Cách Chấm Điểm</h2>
+        <p>
+            Khi bài được submit lên, hệ thống sẽ khởi tạo đối tượng từ lớp <code><b>VoiceClassifier</b></code>. Kế đó sẽ gọi hàm <code><b>load_model</b></code>.
+            Hệ thống sẽ load 1 bộ test bí mật và sẽ truyền vào hàm <code><b>predict</b></code> để get output từ model của bạn. Xem format output trong
+            code template ở repos của bạn.
+            Nếu output khớp với groundtruth thì bạn sẽ được điểm.
+            Good luck!
+
+        <hr />
+    </article>
+</main>
+</body>
+<script>
+    hljs.initHighlightingOnLoad();
+</script>
+</html>

@@ -1,0 +1,318 @@
+<!doctype html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+    <title>Data Science 101 - Chapter 2</title>
+
+    <link rel="stylesheet" href="lib/reveal.css">
+    <link rel="stylesheet" href="lib/theme/myplanet.css">
+
+    <!-- Theme used for syntax highlighting of code -->
+    <link rel="stylesheet" href="lib/zenburn.css">
+</head>
+<body>
+<div class="reveal pattern--random">
+    <div class="slides">
+        <section class="intro" id="intro">
+            <div class="logo-wrapper">
+                <div class="logo"><span class="visually-hidden">Data Science 101</span></div>
+            </div>
+        </section>
+        <section class="title" id="title">
+            <div class="grid-wrapper">
+                <div class="header">
+                    Khoa Công Nghệ Thông Tin <br/>
+                    Trường Đại học Sư Phạm TP.HCM - Việt Nam
+                </div>
+                <div class="content">
+                    <h1>Data Science 101</h1>
+                    <div class="description" style="font-size: 1.3em;">
+                        Phần 2.2. <br/>
+                        Các Bài Toán Cơ Bản với <br/>
+                        Dữ Liệu Không Có Nhãn <br/>
+                        (Unlabeled Data)
+                    </div>
+                </div>
+                <div class="credit">
+                    <hr/>
+                    <div class="label">Presented By</div>
+                    <div class="name">Nguyễn Đặng Kim Khánh</div>
+                    <div class="role">Giảng Viên trường ĐHSP TP.HCM</div>
+                </div>
+            </div>
+        </section>
+        <section class="title" id="subtitle">
+            <div class="grid-wrapper">
+                <div class="header">
+                    Khoa Công Nghệ Thông Tin <br/>
+                    Trường Đại học Sư Phạm TP.HCM - Việt Nam
+                </div>
+                <div class="content">
+                    <h1>Data Science 101</h1>
+                    <div class="description" style="font-size: 1.8em;">
+                        Phần 2.2a. <br/>
+                        Gom Cụm Dữ Liệu<br/>
+                        (Clustering)
+                    </div>
+                </div>
+                <div class="credit">
+                    <hr/>
+                    <div class="label">Presented By</div>
+                    <div class="name">Nguyễn Đặng Kim Khánh</div>
+                    <div class="role">Giảng Viên trường ĐHSP TP.HCM</div>
+                </div>
+            </div>
+        </section>
+        <section class="color--dark">
+            <div class="grid-wrapper">
+                <div class="header">Data Science 101 / Clustering</div>
+                <div class="section">Phát Biểu Bài Toán</div>
+                <div class="main" style="font-size: 1.4em;">
+                    <ul>
+                        <li>Ta cần xây dựng 1 hàm $f$ nhận input là $\textbf{x}$ và output là cho biết $\textbf{x}$ thuộc cụm nào</li>
+                        <li>Tập train là tập $\mathcal{X}$ không có label</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+        <section class="color--dark">
+            <div class="grid-wrapper">
+                <div class="header">Data Science 101 / Clustering</div>
+                <div class="section">Một Số Ứng Dụng của Clustering</div>
+                <div class="main" style="font-size: 1.8em;">
+                    <ul>
+                        <li>Giúp tối ưu quá trình gán nhãn cho tập dữ liệu</li>
+                        <li>Khám phá những nhóm dữ liệu riêng biệt trong tập dữ liệu</li>
+                        <li>Khám phá những phần tử bất thường trong tập dữ liệu </li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+        <section class="subsection color--dark">
+            <div class="grid-wrapper">
+                <div class="header">Data Science 101</div>
+                <h1>Gom Cụm Theo Tiêu Chí Nào?</h1>
+                <div class="description">
+                </div>
+            </div>
+        </section>
+        <section class="color--dark">
+            <div class="grid-wrapper">
+                <div class="header">Data Science 101 / Clustering</div>
+                <div class="section">Connectivity-based Clustering</div>
+                <div class="main" style="font-size: 1.2em;">
+                    Các data instance ở gần nhau thì sẽ gộp chung vô 1 nhóm<br/>
+                    <div class="column" style="margin-top:1em; display: grid; grid-auto-flow: column;">
+                        <div style="text-align: center">
+                            <img src="media/clustering-singlelink.png" style="background-color: white; width:50vmin;"/><br/>
+                            <span>https://en.wikipedia.org/wiki/File:SLINK-Gaussian-data.svg</span>
+                        </div>
+                        <div style="text-align: center">
+                            <img src="media/clustering-singlelink2.png" style="background-color: white; width:50vmin;"/><br/>
+                            <span>https://en.wikipedia.org/wiki/File:SLINK-density-data.svg</span>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </section>
+        <section class="color--dark">
+            <div class="grid-wrapper">
+                <div class="header">Data Science 101 / Clustering</div>
+                <div class="section">Centroid-based Clustering</div>
+                <div class="main" style="font-size: 1.2em;">
+                    Mỗi cụm có 1 trung tâm cụm và ta sẽ có 1 cơ chế nào đó để quyết định 1 đối tượng nào đó có nằm trong cụm đó hay hok. <br/>
+                    <div class="column" style="margin-top:1em; display: grid; grid-auto-flow: column;">
+                        <div style="text-align: center">
+                            <img src="media/kmean1.png" style="background-color: white; width:50vmin;"/><br/>
+                            <span>https://en.wikipedia.org/wiki/File:KMeans-Gaussian-data.svg</span>
+                        </div>
+                        <div style="text-align: center">
+                            <img src="media/kmean2.png" style="background-color: white; width:50vmin;"/><br/>
+                            <span>https://en.wikipedia.org/wiki/File:KMeans-density-data.svg</span>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </section>
+        <section class="color--dark">
+            <div class="grid-wrapper">
+                <div class="header">Data Science 101 / Clustering</div>
+                <div class="section">Distribution-based Clustering</div>
+                <div class="main" style="font-size: 1.2em;">
+                    Ta giả sử data được sinh ra từ 1 mixture of distributions. Data instance trong 1 cụm là samples từ một distribution<br/>
+                    <div class="column" style="margin-top:1em; display: grid; grid-auto-flow: column;">
+                        <div style="text-align: center">
+                            <img src="media/EM-Gaussian-data.svg.png" style="background-color: white; width:50vmin;"/><br/>
+                            <span>https://en.wikipedia.org/wiki/File:EM-Gaussian-data.svg</span>
+                        </div>
+                        <div style="text-align: center">
+                            <img src="media/952px-EM-density-data.svg.png" style="background-color: white; width:50vmin;"/><br/>
+                            <span>https://en.wikipedia.org/wiki/File:EM-density-data.svg</span>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </section>
+        <section class="team color--dark">
+            <div class="grid-wrapper">
+                <div class="header">Data Science 101 / Clustering</div>
+                <div class="section">Density-based Clustering</div>
+                <div class="column" style="font-size: 1.8em;">
+                    <div>
+                        <ul>
+                            <li>Những vùng có mật độ dữ liệu cao sẽ được gom vô 1 cụm</li>
+                            <li>Mỗi cụm sẽ có mật độ dữ liệu khác nhau</li>
+                            <li>Những data instance trong những vùng dữ liệu thưa sẽ được gọi là noise hoặc outlier </li>
+                        </ul>
+                    </div>
+                    <div>
+                        <img src="media/density-data.svg.png" style="background-color: white; width:50vmin;"/>
+                        <div style="font-size: 0.4em; margin-top: 0.4em;">https://en.wikipedia.org/wiki/File:DBSCAN-density-data.svg</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <section class="subsection color--dark">
+            <div class="grid-wrapper">
+                <div class="header">Data Science 101</div>
+                <h1>Một Số Thuật Toán Gom Cụm</h1>
+                <div class="description">
+                </div>
+            </div>
+        </section>
+        <section class="color--dark">
+            <div class="grid-wrapper">
+                <div class="header">Data Science 101 / Clustering</div>
+                <div class="section">K-Mean Clustering</div>
+                <div class="main" style="font-size: 1.4em;">
+                    <ul>
+                        <li>Giả sử chúng ta cần gom $K$ cụm. </li>
+                        <li>Mỗi cụm $C_k$ có 1 trung tâm cụm $\mu_k$, đó là trung bình cộng của các phần tử trong cụm đó. </li>
+                        \[\begin{aligned}
+                        \mu_k=\frac{1}{\left|C_k\right|}\sum_{\textbf{x}_i\in C_k}{\textbf{x}_k}
+                        \end{aligned} \]
+                        <li>Chúng ta cần giả bài toán tối ưu sau:</li>
+                        \[\begin{aligned}
+                        \underset{C_1,\ldots C_k}{\text{arg min}}\sum_{k=1}^{K}\sum_{\textbf{x}_i\in C_k}
+                        {\left\Vert\textbf{x}_i-\mu_k\right\Vert}^2
+                        \end{aligned} \]
+                    </ul>
+                </div>
+            </div>
+        </section>
+        <section class="team color--dark">
+            <div class="grid-wrapper">
+                <div class="header">Data Science 101 / Clustering</div>
+                <div class="section">Deep Clustering</div>
+                <div class="column" style="font-size: 1.4em;">
+                    <div>
+                        <ul>
+                            <li>Dùng các loại network: Auto Encoder, Variational Auto Encoder, Generative Adversarial Network
+                            để học representation cho các data instance. Dùng representation đó để clustering</li>
+                            <li>Bài toán tối ưu sẽ gồm 2 loại loss:</li>
+                            <ul>
+                                <li>Network Loss: reconstruction loss trong AE, variational loss trong VAE, hoặc adversarial loss trong GAN </li>
+                                <li>Clustering loss: k-mean loss, cluster assignment hardening loss</li>
+                            </ul>
+                            \[\begin{aligned}
+                            \mathcal{L} = \lambda\mathcal{L}_{network} + (1-\lambda)\mathcal{L}_{cluster}
+                            \end{aligned} \]
+                        </ul>
+                    </div>
+                    <div>
+                        <img src="media/AE-based.jpg"/>
+                        <div style="font-size: 0.4em; margin-top: 0.4em;">https://deepnotes.io/deep-clustering</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <section class="team color--dark">
+            <div class="grid-wrapper">
+                <div class="header">Data Science 101 / Clustering</div>
+                <div class="section">Dirichlet Process Mixture (DPM) model</div>
+                <div class="column" style="font-size: 1.4em;">
+                    <div>
+                        <ul>
+                            <li>Giả sử data instance được sinh ra từ quá trình sinh như hình bên cạnh</li>
+                            \[\begin{aligned}
+                            \mathbb{\pi}&\sim\text{GEM}\left(a\right) \\
+                            \mathbb{\theta}_k&\sim H\left(\mathbb{\psi}\right) \\
+                            z_n&\sim \text{Cat}\left(\mathbb{\pi}\right) \\
+                            \textbf{x}_n&\sim p\left(\mathbb{\theta}_{z_n}\right) \\
+                            \end{aligned} \]
+                            <li>Không cần phải xác định trước số lượng cụm</li>
+                            <li>Để estimate giá trị cho các parameters, ta có thể dùng Gibbs sampling</li>
+                        </ul>
+                    </div>
+                    <div>
+                        <img src="media/dpm.png" style="max-height:20em; width: auto;"/>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <section class="subsection color--dark">
+            <div class="grid-wrapper">
+                <div class="header">Data Science 101</div>
+                <h1>Evaluation</h1>
+                <div class="description">
+                </div>
+            </div>
+        </section>
+        <section class="color--dark">
+            <div class="grid-wrapper">
+                <div class="header">Data Science 101 / Clustering</div>
+                <div class="section">Internal Evaluation</div>
+                <div class="main" style="font-size: 1.8em;">
+                    <ul>
+                        <li>Internal Evaluation dùng khi chúng ta không biết ground truth</li>
+                        <li>Davies–Bouldin Index (DBI)</li>
+                        \[\begin{aligned}
+                        DBI=\frac{1}{K}\sum_{k=1}^K{\underset{i\neq k}{\text{max}}{\left(\frac{\sigma_i+\sigma_k}{d\left(c_i,c_k\right)}\right)}}
+                        \end{aligned} \]
+                        trong đó $K$ là số lượng clusters, $c_k$ là trung tâm của cụm thứ $k$, $\sigma_k$ là trung bình khoảng cách giữa các cặp
+                        data instance trong cụm thứ $k$ và $d\left(c_i,c_k\right)$ là khoảng cách giữa trung tâm cụm thứ $i$ và thứ $k$
+                        <li>DBI càng nhỏ càng tốt</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+        <section class="color--dark">
+            <div class="grid-wrapper">
+                <div class="header">Data Science 101 / Clustering</div>
+                <div class="section">External Evaluation</div>
+                <div class="main" style="font-size: 1.5em;">
+                    <ul>
+                        <li>External Evaluation dùng khi biết ground truth (các data instance nào thuộc cùng 1 nhóm)</li>
+                        <li>TP là số lượng các pairs mà ta gom chung vô cùng 1 nhóm và bản chất chúng cũng thuộc cùng 1 nhóm</li>
+                        <li>FP là số lượng các pairs mà ta gom chung vô cùng 1 nhóm và bản chất chúng KHÔNG thuộc cùng 1 nhóm</li>
+                        <li>FN là số lượng các pairs mà ta KHÔNG gom chung vô cùng 1 nhóm và bản chất chúng lại thuộc cùng 1 nhóm</li>
+                        <li>TN là số lượng các pairs mà ta KHÔNG gom chung vô cùng 1 nhóm và bản chất chúng KHÔNG thuộc cùng 1 nhóm</li>
+                        \[\begin{aligned}
+                        TP+FP+FN+TN=C_N^2
+                        \end{aligned} \]
+                    </ul>
+                </div>
+            </div>
+        </section>
+        <section class="subsection color--dark">
+            <div class="grid-wrapper">
+                <div class="header">Data Science 101</div>
+                <h1>Thắc Mắc và Trao Đổi</h1>
+                <div class="description">
+                </div>
+            </div>
+        </section>
+    </div>
+</div>
+<script src="lib/head.min.js"></script>
+<script src="lib/reveal.js"></script>
+<script src="lib/plugin/math/math.js"></script>
+<script src="lib/plugin/highlight/highlight.js"></script>
+<script src="lib/reveal-init.js"></script>
+</body>
+</html>

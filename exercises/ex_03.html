@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Exercise 03 - Data Science 101</title>
+    <link rel="stylesheet" href="css/style.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.2/styles/solarized-dark.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.2/highlight.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.2/languages/python.min.js"></script>
+</head>
+<body id="top">
+<header>
+    <h1>Exercise 03</h1>
+    <p class="author">Data Science 101<br />August 2020
+    </p>
+</header>
+<div class="abstract">
+    <p>
+        Trong bài tập này chúng ta thử giải quyết bài toán classification. Thông qua đó, chúng ta sẽ nắm cách xây dựng model cơ bản của thư viện
+        <code>keras</code>.
+    </p>
+</div>
+<main>
+    <article>
+        <h2 id="getting-started">Lời Mở Đầu</h2>
+        <p>
+            Loài người có 1 tham vọng là muốn máy tính có thể nhận dạng được chữ viết tay của con người.
+            Điều này có thể giúp con người không phải lệ thuộc vào bàn phím. Đồng thời sẽ số hóa các văn bản viết tay,
+            đặc biệt là các sổ tay ghi chú của người dùng. Trong bài tập này, chúng ta thử giúp máy tính
+            phân loại các chữ số viết tay của con người.
+        </p>
+        <h2 id="dataset">Dataset</h2>
+        <p>
+            Chúng ta sẽ sử dụng dataset kinh điển và nổi tiếng<label for="sn-1" class="sidenote-toggle sidenote-number"></label>
+            <input type="checkbox" id="sn-1" class="sidenote-toggle" />
+            <span class="sidenote">Bạn cũng có thể nổi tiếng nếu bạn tạo ra 1 dataset được nhiều người dùng (*＾▽＾)／ </span>,
+            đó là MNIST (viết tắt của từ Modified National Institute of Standards and Technology).
+            Để thuận lợi trong việc preprocess và format dữ liệu, các bạn download tại <a href="https://www.kaggle.com/oddrationale/mnist-in-csv">trang web này</a>.
+            Sau đó bạn chép 2 files <code><b>mnist_train.csv</b></code> và <code><b>mnist_test.csv</b></code> vào folder <code><b>datasets</b></code>.
+        </p>
+        <p>
+            Bất kì bài toán nào, bạn cần dành thời gian để tìm hiểu kĩ dataset mà bạn sẽ làm việc. Việc làm này rất hữu ích để bạn đề ra các phương pháp
+            giải quyết bài toán sau này. Một số tính chất cơ bản bạn cần phải biết về dataset như là: bao nhiêu data samples, số chiều của mỗi data samples,
+            có missing attribute nào không, ứng với mỗi chiều thì miền giá trị như thế nào, có bao nhiêu lớp dữ liệu, có bao nhiêu data samples ứng với từng lớp dữ liệu.
+            Càng nắm rõ dataset bao nhiêu thì bạn sẽ thành công với bài toán bấy nhiêu.
+        </p>
+        <h2 id="construction">Xây Dựng Lớp DigitClassifier</h2>
+        <p>
+            Để tiện phát triển các ứng dụng sau này, chúng ta nên gói model và các biến cần thiết vô 1 lớp. Ở đây, chúng ta sẽ thống nhất đặt tên là
+            <code><b>DigitClassifier</b></code> (đã được định nghĩa sơ bộ trong file <code><b>digit_classifier.py</b></code>). Bạn có thể thêm thắt nhiều
+            thứ trong hàm khời tạo <code><b>__init__</b></code>, nhưng ít nhất phải có khởi tạo
+            thành phần dữ liệu <code><b>self.model</b></code><label for="sn-2" class="sidenote-toggle sidenote-number"></label>
+            <input type="checkbox" id="sn-2" class="sidenote-toggle" />
+            <span class="sidenote">Bạn có thể đặt tên nào cũng được, miễn là phải có chữ selfie (─‿─)</span>
+            cho lớp <code><b>DigitClassifier</b></code>.
+            Thành phần dữ liệu <code><b>self.model</b></code> sẽ chứa các thông tin về model mà chúng ta sẽ build
+        </p>
+        <pre>
+            <code class="python hljs">
+    class DigitClassifier:
+        def __init__(self):
+            self.model = None
+            </code>
+        </pre>
+        <p>
+            Kế đó ta xây dựng hàm <code><b>build_model</b></code> cho lớp <code><b>DigitClassifier</b></code>. Bạn có thể tự do thoải mái xây dựng model
+            theo ý mình, nhưng bạn phải gán vào thành phần dữ liệu <code><b>self.model</b></code>. Ví dụ như sau:
+        </p>
+        <pre>
+            <code class="python hljs">
+        def build_model(self):
+            input_layer = Input(shape=784)
+            output_layer = Dense(10, activation="softmax")(input_layer)
+            model = Model(inputs=input_layer, outputs=output_layer)
+            <b style="color: #F25930">self.model = model</b>
+            </code>
+        </pre>
+        <p>
+            Tiếp theo ta xây dựng hàm <code><b>load_model</b></code> và hàm <code><b>save_model</b></code> dùng để store model xuống ổ cứng và load lại model
+            để phục vụ prediction sau này. Để tiện cho việc chấm bài bạn nên store model trong folder <code><b>models</b></code>. Ví dụ như sau.
+        </p>
+        <pre>
+            <code class="python hljs">
+        def load_model(self):
+            self.model = keras.models.load_model('models/digit_classifier.hdf5')
+
+        def save_model(self):
+            self.model.save('models/digit_classifier.hdf5')
+            </code>
+        </pre>
+        <p>
+            Cuối cùng là xây dựng hàm <code><b>train</b></code> và <code><b>predict</b></code>. Ngoài ra, bài tập có cung cấp 2 notebooks train.ipynb và test.ipynb
+            để bạn có thể train và test.
+        </p>
+        <h2 id="exam">Cách Chấm Điểm</h2>
+        <p>
+            Khi bài được submit lên, hệ thống sẽ khởi tạo đối tượng từ lớp <code><b>DigitClassifier</b></code>. Kế đó sẽ gọi hàm <code><b>load_model</b></code>.
+            Hệ thống sẽ load 1 bộ test bí mật và sẽ truyền vào hàm <code><b>predict</b></code> để get output từ model của bạn.
+            Nếu output khớp với groundtruth thì bạn sẽ được điểm.
+            Good luck!
+
+        <hr />
+    </article>
+</main>
+</body>
+<script>
+    hljs.initHighlightingOnLoad();
+</script>
+</html>

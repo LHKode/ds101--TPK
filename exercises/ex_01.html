@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Exercise 01 - Data Science 101</title>
+    <link rel="stylesheet" href="css/style.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.2/styles/solarized-dark.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.2/highlight.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.2/languages/python.min.js"></script>
+</head>
+<body id="top">
+<header>
+    <h1>Exercise 01</h1>
+    <p class="author">Data Science 101<br />August 2020
+    </p>
+</header>
+<div class="abstract">
+    <p>
+        Trong bài tập này chúng ta sẽ làm quen cách sử dụng BeautifulSoup, Pandas thông qua dữ liệu về thời tiết của <code>timeanddate</code>.
+    </p>
+</div>
+<main>
+    <article>
+        <h2 id="getting-started">Lời Mở Đầu</h2>
+        <p>
+            Trong ngành khí tượng thủy văn học, có 1 bài toán phổ biến là dự báo thời tiết. Để có thể dự báo được chính xác,
+            chúng ta cần phải thu thập những dữ liệu trong quá khứ bao gồm nhiệt độ, độ ẩm, áp suất khí quyển,... Trong bài tập này,
+            chúng ta hãy thử thu thập dữ liệu về nhiệt độ ở Melbourne, Úc tại trang web <code>timeanddate</code> từ ngày 18/08/2020 đến hết ngày 22/08/2020 theo từng giờ
+            và làm 1 số phân tích dữ liệu cơ bản.
+        </p>
+        <h2 id="legal">Kiểm Tra Tính Hợp Pháp</h2>
+        <p>
+            Trước khi thu thập dữ liệu của bất cứ tổ chức nào, chúng ta cần phải xem tính hợp pháp và quyền sử dụng dữ liệu đó như thế nào.
+            Bạn hãy đọc kĩ "term of use" của <code>timeanddate</code> <a href="https://www.timeanddate.com/information/terms-conditions.html">tại đây</a>
+            để biết chắc chắn mình được phép dùng cho mục đích cá nhân/học tập.
+        </p>
+        <h2 id="collect">Thu Thập Thông Tin Thời Tiết</h2>
+        <p>
+            Chúng ta sẽ thu thập nhiệt độ cao nhất và thấp nhất theo từng ngày tại Melbourne, Úc trong năm 2019 theo từng ngày.
+            Để làm việc này, đầu tiên bạn hãy vào trang web <code>timeanddate</code> và xem quy luật đặt tên đường dẫn (url) của trang web.
+            Bạn sẽ thấy đường dẫn có dạng sau đây <code>https://www.timeanddate.com/weather/australia/melbourne/historic?hd=<b>20200822</b></code>.
+            Nếu ta thay thế <code><b>20200822</b></code> bằng <code><b>20200818</b></code> thì nó hiểu và hiển thị nhiệt độ trong ngày 18/08/2020.
+            Như vậy ta chỉ cần viết 1 đoạn code lấy nhiệt độ cao nhất và thấp nhất trong 1 ngày và nó cho lặp với các ngày khác nhau bằng việc
+            thay đổi url tương ứng thì ta có thể lấy được dữ liệu tất cả các ngày từ ngày 18/08/2020 đến hết ngày 22/08/2020.
+        </p>
+        <p>
+            Để đọc thông tin trên 1 trang web, chúng ta có thể dùng package <b><code>BeautifulSoup</code></b> kết hợp với <b><code>requests</code></b>.
+            Trước tiên ta import 2 thư viện này như sau:
+        </p>
+        <pre>
+            <code class="python hljs">
+    import requests
+    from bs4 import BeautifulSoup
+            </code>
+        </pre>
+        <p>
+            Package <b><code>requests</code></b> dùng để lấy content của trang web ở dạng text. Package <b><code>BeautifulSoup</code></b> dùng để
+            parse text thành dạng có cấu trúc cây (chính xác là cấu trúc DOM) để ta có thể dễ dàng lấy thông tin từ trang web đó. Để parse thành dạng
+            có thể truy vấn thông tin ta dùng câu lệnh sau:
+        </p>
+        <pre>
+            <code class="python hljs">
+    page = requests.get('https://www.timeanddate.com/weather/australia/melbourne/historic?hd=20200822')
+    soup = BeautifulSoup(page.content, 'html.parser')
+            </code>
+        </pre>
+        <p>
+            Đối tượng <code><b>soup</b></code> hỗ trợ các hàm cho phép ta truy vấn nhanh như là: <code>find_all</code>, <code>find</code>, <code>select</code>.
+            Bạn có thể xem hướng dẫn đầy đủ <a href="https://www.crummy.com/software/BeautifulSoup/bs4/doc/#find-all">ở đây</a>.
+        </p>
+        <h2 id="prepare">Tổ Chức Dữ Liệu</h2>
+        <p>
+            Sau khi bạn thu thập dữ liệu, bạn hãy lưu thành dạng csv có dạng sau đây:
+        <pre>
+            <code class="plaintext hljs">
+    date,time,temp,wind,humidity,barometer
+    20,12:00 am,8,17,76,997
+    20,12:30 am,9,24,71,997
+            </code>
+    </pre> trong đó cột <code>date</code> chỉ cần ghi ngày, cột <code>time</code> ghi theo format hh:mm am/pm, cột <code>temp</code>, <code>wind</code>,
+        <code>humidity</code>, <code>barometer</code> không cần ghi đơn vị (mặc định các cột lần lượt tính theo đơn vị độ C, km/h, %, mbar). Sau đó, bạn hãy lưu
+        vào folder <code><b>data</b></code> và đặt tên file là <code><b>melbourne.18_08_2020.22_08_2020.csv</b></code>
+        </p>
+        <h2 id="process">Xử Lý Dữ Liệu</h2>
+        <p>
+            Trong phần này, chúng ta muốn xác định nhiệt độ cao nhất trong mỗi ngày. Để làm việc này, chúng ta sẽ sử dụng thư viện <code><b>pandas</b></code>.
+            Package <b><code>pandas</code></b> có thế mạnh trong việc xử lý data có khối tượng tương đối lớn với thời gian nhanh.
+            Trước tiên chúng ta phải import thư viện như sau:
+        <pre>
+            <code class="python hljs">
+    import pandas as pd
+            </code>
+        </pre>
+        </p>
+        <p>
+            Sau đó chúng ta sẽ load dữ liệu lên như sau:
+        </p>
+        <pre>
+            <code class="python hljs">
+    df = pd.read_csv('melbourne.18_08_2020.22_08_2020.csv')
+            </code>
+        </pre>
+        <p>
+            Đối tượng <b><code>df</code></b> gọi là data frame, chứa thông tin toàn bộ file csv mà bạn đã load. Từ đây, chúng ta có thể sử dụng các lệnh
+            <code>groupby</code>, <code>max</code> để giải quyết nhu cầu xác định nhiệt độ cao nhất trong mỗi ngày.
+        </p>
+        <p>
+            Để có thể reuse code lại nhiều lần, chúng ta hãy bỏ phần code tính toán nhiệt độ cao nhất trong mỗi ngày vào trong 1 hàm.
+            Input sẽ là 1 đối tượng <b><code>df</code></b> bất kì
+            Output sẽ là 1 list chứa các nhiệt độ cao nhất theo từ ngày đã được mô tả trong <b><code>df</code></b> đó.
+        </p>
+        <h2 id="require">Yêu Cầu Khi Nộp Bài</h2>
+        <ul>
+            <li>
+                File <code><b>melbourne.18_08_2020.22_08_2020.csv</b></code> phải để trong folder <b><code>data</code></b>
+            </li>
+            <li>
+                Đoạn code tính nhiệt độ cao nhất trong mỗi ngày phải nằm trong hàm <b><code>compute_max_temp</code></b> trong file <b><code>main.py</code></b>
+            </li>
+        </ul>
+        <hr />
+    </article>
+</main>
+</body>
+<script>
+    hljs.initHighlightingOnLoad();
+</script>
+</html>

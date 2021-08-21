@@ -1,0 +1,277 @@
+<!doctype html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+    <title>Data Science 101 - Chapter 2</title>
+
+    <link rel="stylesheet" href="lib/reveal.css">
+    <link rel="stylesheet" href="lib/theme/myplanet.css">
+    <link rel="stylesheet" href="css/main.css">
+    <!-- Theme used for syntax highlighting of code -->
+    <link rel="stylesheet" href="lib/zenburn.css">
+</head>
+<body>
+<div class="reveal pattern--random">
+    <div class="slides">
+        <section class="intro" id="intro">
+            <div class="logo-wrapper">
+                <div class="logo"><span class="visually-hidden">Data Science 101</span></div>
+            </div>
+        </section>
+        <section class="title" id="title">
+            <div class="grid-wrapper">
+                <div class="header">
+                    Khoa Công Nghệ Thông Tin <br/>
+                    Trường Đại học Sư Phạm TP.HCM - Việt Nam
+                </div>
+                <div class="content">
+                    <h1>Data Science 101</h1>
+                    <div class="description" style="font-size: 1.8em;">
+                        Phần 2.1c. <br/>
+                        Bài Toán <br/>
+                        Nhận Dạng Đối Tượng <br/>
+                        (Object Detection)
+                    </div>
+                </div>
+                <div class="credit">
+                    <hr/>
+                    <div class="label">Presented By</div>
+                    <div class="name">Nguyễn Đặng Kim Khánh</div>
+                    <div class="role">Giảng Viên trường ĐHSP TP.HCM</div>
+                </div>
+            </div>
+        </section>
+        <section class="subsection color--dark">
+            <div class="grid-wrapper">
+                <div class="header">Data Science 101 / Object Detection</div>
+                <h1>Bước 1 & 2: Xác Định tập $\mathcal{X}$ and tập $\mathcal{Y}$</h1>
+                <div class="description">
+                    "Bất kì bài toán trong Tin Học, nếu ta không hiểu rõ input và output thì sẽ không giải được!"
+                </div>
+            </div>
+        </section>
+        <section class="team color--dark">
+            <div class="grid-wrapper">
+                <div class="header">Data Science 101 / Object Detection</div>
+                <div class="section">Phát Biểu Bài Toán</div>
+                <div class="column" style="font-size: 1.8em;">
+                    <div>
+                        <ul>
+                            <li>Ta cần xây dựng hệ thống xác định vị trí của đối tượng (mà ta quan tâm) trong 1 khung hình</li>
+                            <li>Input là bức hình (dữ liệu hình ảnh)</li>
+                            <li>Output là các khung hình chữ nhật nhỏ nhất bao quanh đối tượng ta cần tìm</li>
+                            <li>Khác với bài toán classification</li>
+                            <li>Thường là tác vụ đầu tiên trong một hệ thống phức tạp</li>
+                        </ul>
+                    </div>
+                    <div>
+                        <img src="media/object_detection.jpg"/>
+                        <span style="font-size: 0.3em">https://upload.wikimedia.org/wikipedia/commons/3/38/Detected-with-YOLO--Schreibtisch-mit-Objekten.jpg</span>
+                    </div>
+
+                </div>
+            </div>
+        </section>
+        <section class="color--dark">
+            <div class="grid-wrapper">
+                <div class="header">Data Science 101 / Object Detection</div>
+                <div class="section">Phát Biểu Bài Toán (cont.)</div>
+                <div class="main" style="font-size: 1.8em;">
+                    <ul>
+                        <li>Bản chất đây là bài toán kết hợp classification và regression</li>
+                        <li>Regression: ta cần output tọa độ của các khung hình chữ nhật</li>
+                        <li>Classification: ta cần phân loại vùng này có hay không có đối tượng, và nó là đối tượng gì</li>
+                        <li>Cụ thể là:</li>
+                        <ul>
+                            <li>Input: $\textbf{x}$ là 1 array 3 chiều</li>
+                            <li>Output: multiple bounding boxes, each box contains</li>
+                            <ul>
+                                <li>vị trí của box: $x_{center}\in\mathbb{R}$, $y_{center}\in\mathbb{R}$, $h\in\mathbb{R}$, $w\in\mathbb{R}$</li>
+                                <li>box chứa đối tượng gì hay không có đối tượng gì cả</li>
+                            </ul>
+                        </ul>
+                    </ul>
+                </div>
+            </div>
+        </section>
+        <section class="subsection color--dark">
+            <div class="grid-wrapper">
+                <div class="header">Data Science 101 / Object Detection</div>
+                <h1>Bước 3: Xác Định Họ Hàm $\mathcal{F}$</h1>
+                <div class="description">
+
+                </div>
+            </div>
+        </section>
+        <section class="team color--dark">
+            <div class="grid-wrapper">
+                <div class="header">Data Science 101 / Object Detection</div>
+                <div class="section">Chia lưới (grid) cho khung hình</div>
+                <div class="column" style="font-size: 1.8em;">
+                    <div>
+                        <ul>
+                            <li>Mỗi ô sẽ có nhiệm vụ đoán xem nó có chứa object và tọa độ của object đó</li>
+                            <li>
+                                Với thiết kế này, output sẽ có kích thước: </li>
+                            \[\begin{aligned}
+                            M\times N\times \left(5 + C\right)
+                            \end{aligned} \]
+                            trong đó
+                                $M\times N$ là kích thước lưới, $C$ là số lớp và $5$ bao gồm 5 thông tin: $x_{center}, y_{center}, $ width, height,
+                                confident score của bounding box trong ô đó
+                            <li>Nếu đối tượng không nằm trọn trong ô lưới thì sao!?</li>
+                        </ul>
+                    </div>
+                    <div>
+                        <img src="media/grid.png"/>
+                        <div style="font-size: 0.2em; text-align: center">https://www.hackerearth.com/blog/developers/introduction-to-object-detection/</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <section class="team color--dark">
+            <div class="grid-wrapper">
+                <div class="header">Data Science 101 / Object Detection</div>
+                <div class="section">Chia lưới (grid) cho khung hình (cont.)</div>
+                <div class="column" style="font-size: 1.8em;">
+                    <div>
+                        <ul>
+                            <li>Chúng ta có thể đoán được kích thước của đối tượng nếu chỉ thấy được 1 phần</li>
+                            <li style="margin-top: 1em;">Model cũng sẽ học được nếu trong tập train có nhiều vị trí khác nhau của xe trong 1 ô</li>
+                            <li style="margin-top: 1em;">Nếu đối tượng có nhiều kích thước, tỉ lệ khác nhau thì sao!?</li>
+                            <li style="margin-top: 1em;">Nếu các đối tượng nằm che 1 phần của nhau thì sao!?</li>
+                        </ul>
+                    </div>
+                    <div>
+                        <img src="media/halfcar.jpg"/>
+                        <div style="font-size: 0.2em; text-align: center">https://en.wikipedia.org/wiki/Bugatti_Divo#/media/File:Bugatti_Divo,_GIMS_2019,_Le_Grand-Saconnex_(GIMS0029).jpg</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <section class="team color--dark">
+            <div class="grid-wrapper">
+                <div class="header">Data Science 101 / Object Detection</div>
+                <div class="section">Khái niệm Anchor trong Object Detection</div>
+                <div class="column" style="font-size: 1.8em;">
+                    <div>
+                        <ul>
+                            <li>Mỗi 1 ô sẽ có nhiều anchor box</li>
+                            <li>Mỗi anchor box sẽ có nhiệm vụ dự đoán vị trí của đối tượng mà nó bao phủ nhiều nhất</li>
+                            <li>Với thiết kế này, output sẽ có kích thước: </li>
+                            \[\begin{aligned}
+                            M\times N\times K\times\left(5 + C\right)
+                            \end{aligned} \]
+                            trong đó $K$ là số lượng anchor box
+                            <li>Số lượng anchor box do ta tự quyết định</li>
+                            <li>Kích thước anchor box do ta tự quyết định hoặc gom cụm dựa trên các box trong tập train</li>
+                        </ul>
+                    </div>
+                    <div>
+                        <img src="media/anchors.png"/>
+                        <div style="font-size: 0.2em; text-align: center">https://towardsdatascience.com/forget-the-hassles-of-anchor-boxes-with-fcos-fully-convolutional-one-stage-object-detection-fc0e25622e1c</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <section class="subsection color--dark">
+            <div class="grid-wrapper">
+                <div class="header">Data Science 101 / Object Detection</div>
+                <h1>Bước 4: Xác Định Hàm Loss</h1>
+                <div class="description">
+                </div>
+            </div>
+        </section>
+        <section class="color--dark">
+            <div class="grid-wrapper">
+                <div class="header">Data Science 101 / Object Detection</div>
+                <div class="section">Hàm Loss trong Object Detection</div>
+                <div class="main" style="font-size: 1.8em;">
+                    <ul>
+                        <li>Dạng tổng quát: $loss=\lambda_{a}l_{coord}+\lambda_{b}l_{conf}+\lambda_{c}l_{class}$</li>
+                        <li>$l_{coord}$ và $l_{conf}$ có thể dùng các loại loss trong regression. Ví dụ:</li>
+                        \[\begin{aligned}
+                        l_{coord}&=\sum_{i=0}^{M\times N}\sum_{k=0}^{K}\mathbb{1}_{i,k}^{obj}
+                        \left[
+                            \left(x_{i,j}-\hat{x}_{i,j}\right)^2+\left(y_{i,j}-\hat{y}_{i,j}\right)^2
+                            +\left(w_{i,j}-\hat{w}_{i,j}\right)^2+\left(h_{i,j}-\hat{h}_{i,j}\right)^2
+                        \right]\\
+                        l_{conf}&=\sum_{i=0}^{M\times N}\sum_{k=0}^{K}\mathbb{1}_{i,k}^{obj}
+                        \left[
+                        \left(\lambda_{obj}\mathbb{1}_{i,j}^{obj}+\lambda_{noobj}\left(1-\mathbb{1}_{i,j}^{obj}\right)\right)
+                        \left(c_{i,j}-\hat{c}_{i,j}\right)^2
+                        \right]
+                        \end{aligned} \]
+                        trong đó $K$ là số lượng anchor
+                        <li>$l_{class}$ có thể dùng các loại loss trong classification</li>
+
+                    </ul>
+                </div>
+            </div>
+        </section>
+        <section class="subsection color--dark">
+            <div class="grid-wrapper">
+                <div class="header">Data Science 101</div>
+                <h1>Bước 6: Evaluate</h1>
+                <div class="description">
+                    "Làm sao để so sánh đánh giá model nào tốt hơn?"
+                </div>
+            </div>
+        </section>
+        <section class="team color--dark">
+            <div class="grid-wrapper">
+                <div class="header">Data Science 101 / Object Detection</div>
+                <div class="section">Intersection over Union (IoU)</div>
+                <div class="column" style="font-size: 1.8em;">
+                    <div>
+                        <ul>
+                            <li>Thường người ta sẽ xem đây là điều kiện cần để xác định ta dự đoán đúng vị trí của đối tượng hay không</li>
+                            <li>Ví dụ ta chọn ngưỡng threshold là IoU = 0.7, nếu bounding box dự đoán có IoU < 0.7 thì ta gọi là sai và ngược lại</li>
+                            <img src="media/iou_visual.png"/>
+                            <span style="font-size: 0.3em">https://commons.wikimedia.org/wiki/File:Intersection_over_Union_-_poor,_good_and_excellent_score.png</span>
+                        </ul>
+                    </div>
+                    <div>
+                        <img src="media/iou.png"/>
+                        <span style="font-size: 0.3em">https://commons.wikimedia.org/wiki/File:Intersection_over_Union_-_visual_equation.png</span>
+                    </div>
+
+                </div>
+            </div>
+        </section>
+        <section class="color--dark">
+            <div class="grid-wrapper">
+                <div class="header">Data Science 101 / Object Detection</div>
+                <div class="section">Precision & Recall</div>
+                <div class="main" style="font-size: 1.8em;">
+                    <ul>
+                        <li>Giả sử ta chọn IoU=0.7 và chỉ xét class="car"</li>
+                        <li>True Positive: những bounding box mà ta predict là "car" có IoU >= 0.7</li>
+                        <li>False Positive: những bounding box mà ta predict là "car" có IoU < 0.7</li>
+                        <li>False Negative: những ground truth bounding box có nhãn là "car"
+                            nhưng có IoU < 0.7 hoặc bị predict sai nhãn</li>
+                        <li>Không có khái niệm True Negative</li>
+                        <li>Từ đó ta có độ đo Precision và Recall như lúc trước đã học</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+        <section class="subsection color--dark">
+            <div class="grid-wrapper">
+                <div class="header">Data Science 101</div>
+                <h1>Thắc Mắc và Trao Đổi</h1>
+                <div class="description">
+                </div>
+            </div>
+        </section>
+    </div>
+</div>
+<script src="lib/head.min.js"></script>
+<script src="lib/reveal.js"></script>
+<script src="lib/plugin/math/math.js"></script>
+<script src="lib/plugin/highlight/highlight.js"></script>
+<script src="lib/reveal-init.js"></script>
+</body>
+</html>

@@ -1,0 +1,125 @@
+<!doctype html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+    <title>Data Science 101 - Chapter 2</title>
+
+    <link rel="stylesheet" href="lib/reveal.css">
+    <link rel="stylesheet" href="lib/theme/myplanet.css">
+    <link rel="stylesheet" href="css/main.css">
+    <!-- Theme used for syntax highlighting of code -->
+    <link rel="stylesheet" href="lib/zenburn.css">
+</head>
+<body>
+<div class="reveal pattern--random">
+    <div class="slides">
+        <section class="intro" id="intro">
+            <div class="logo-wrapper">
+                <div class="logo"><span class="visually-hidden">Data Science 101</span></div>
+            </div>
+        </section>
+        <section class="title" id="title">
+            <div class="grid-wrapper">
+                <div class="header">
+                    Khoa Công Nghệ Thông Tin <br/>
+                    Trường Đại học Sư Phạm TP.HCM - Việt Nam
+                </div>
+                <div class="content">
+                    <h1>Data Science 101</h1>
+                    <div class="description" style="font-size: 1.8em;">
+                        Phần 3.2. <br/>
+                        Dữ liệu không cân bằng <br/>
+                        (imbalance dataset)
+                    </div>
+                </div>
+                <div class="credit">
+                    <hr/>
+                    <div class="label">Presented By</div>
+                    <div class="name">Nguyễn Đặng Kim Khánh</div>
+                    <div class="role">Giảng Viên trường ĐHSP TP.HCM</div>
+                </div>
+            </div>
+        </section>
+        <section class="color--dark">
+            <div class="grid-wrapper">
+                <div class="header">Data Science 101 / Imbalance Dataset</div>
+                <div class="section">Khái Niệm Imbalance Dataset</div>
+                <div class="main" style="font-size: 1.8em;">
+                    <ul>
+                        <li>Một số class trong tập dữ liệu có nhiều samples hơn các class còn lại</li>
+                        <li>Có 2 lý do:</li>
+                        <ul>
+                            <li>Quá trình data collection</li>
+                            <li>Bản chất data trong thực tế</li>
+                        </ul>
+                    </ul>
+                </div>
+            </div>
+        </section>
+        <section class="color--dark">
+            <div class="grid-wrapper">
+                <div class="header">Data Science 101 / Imbalance Dataset</div>
+                <div class="section">Những Tác Động của Imbalance Dataset</div>
+                <div class="main" style="font-size: 1.8em;">
+                    <ul>
+                        <li>Optimizer sẽ tập trung học những data samples trong classes chiếm đa số,
+                            bỏ qua việc học những data samples trong classes chiếm thiểu số</li>
+                        <li>Kết quả là model sau khi train sẽ có xu hướng predict những classes chiếm đa số</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+        <section class="subsection color--dark">
+            <div class="grid-wrapper">
+                <div class="header">Data Science 101 / Imbalance Dataset</div>
+                <h1>Các Phương Pháp Khắc Phục ở Góc Độ Data</h1>
+                <div class="description">
+
+                </div>
+            </div>
+        </section>
+        <section class="color--dark">
+            <div class="grid-wrapper">
+                <div class="header">Data Science 101 / Imbalance Dataset</div>
+                <div class="section">Oversampling</div>
+                <div class="main" style="font-size: 1.8em;">
+                    <ul>
+                        <li>Tạo ra nhiều bản copy của data samples trong những classes chiếm thiểu số</li>
+                        <li>Random Oversampling: ngẫu nhiên tạo những bản copy</li>
+                        <li>SMOTE (Synthetic Minority Over-sampling Technique): tạo synthetic data dựa vào những data samples trên classes chiếm thiểu số</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+        <section class="color--dark">
+            <div class="grid-wrapper">
+                <div class="header">Data Science 101 / Imbalance Dataset</div>
+                <div class="section">Undersampling</div>
+                <div class="main" style="font-size: 1.8em;">
+                    <ul>
+                        <li>Giảm thiểu số lượng data samples trong những classes chiếm đa số</li>
+                        <li>Random undersampling: ngẫu nhiên bỏ 1 số data samples trong class chiếm đa số</li>
+                        <li>Clustering: thực hiện gom cụm và chỉ chọn những phần tử đại diện cho cụm đó</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+        <section class="subsection color--dark">
+            <div class="grid-wrapper">
+                <div class="header">Data Science 101</div>
+                <h1>Thắc Mắc và Trao Đổi</h1>
+                <div class="description">
+                </div>
+            </div>
+        </section>
+    </div>
+</div>
+<script src="lib/head.min.js"></script>
+<script src="lib/reveal.js"></script>
+<script src="lib/plugin/math/math.js"></script>
+<script src="lib/plugin/highlight/highlight.js"></script>
+<script src="lib/reveal-init.js"></script>
+</body>
+</html>

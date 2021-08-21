@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Exercise 02 - Data Science 101</title>
+    <link rel="stylesheet" href="css/style.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.2/styles/solarized-dark.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.2/highlight.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.2/languages/python.min.js"></script>
+</head>
+<body id="top">
+<header>
+    <h1>Exercise 02</h1>
+    <p class="author">Data Science 101<br />August 2020
+    </p>
+</header>
+<div class="abstract">
+    <p>
+        Trong bài tập này chúng ta sẽ làm quen cách sử dụng Selenium, Numpy, Pandas thông qua dữ liệu về tỷ giá của các đồng tiền được niêm yết
+        ở trang web của ngân hàng <code>Vietcombank</code>.
+    </p>
+</div>
+<main>
+    <article>
+        <h2 id="getting-started">Lời Mở Đầu</h2>
+        <p>
+            Trong ngành tài chính ngân hàng, giới đầu tư và các nhà hoạch định thường có nhu cầu dự đoán tỷ giá của các đồng tiền trên thế giới.
+            Cũng như các bài toán về dữ liệu khác, chúng ta cần có dữ liệu về tỷ giá trong quá khứ để từ đó xây dựng mô hình dự đoán tương lai.
+            Trong bài tập này, chúng ta thử thu thập dữ liệu tỷ giá đồng Úc trong tháng 6 và tháng 7 năm 2020 và thử giải quyết bài toán xác định thời điểm mua
+            và thời điểm bán sao cho ta có lời nhất. Để cho bài toán đơn giản hơn, chúng ta chỉ thu thập tỷ giá bán và xem tỷ giá mua bằng với tỷ giá bán.
+            Và thêm nữa, ta chỉ cần trả lời lợi nhuận tối đa có thể đạt được bao nhiêu (không cần trả lời thời điểm mua, thời điểm bán để có lời nhất).
+
+        </p>
+        <h2 id="legal">Kiểm Tra Tính Hợp Pháp</h2>
+        <p>
+            Trước khi thu thập dữ liệu của bất cứ tổ chức nào, chúng ta cần phải xem tính hợp pháp và quyền sử dụng dữ liệu đó như thế nào.
+            Bạn hãy đọc kĩ "term of use" (điều khoản sử dụng) của trang web đó. Trường hợp họ không có thì chúng ta có thể dùng những quy định trong pháp luật hiện hành
+            của quốc gia quản lý trang web đó để áp dụng.
+            Dữ liệu về tỷ giá cũng được công bố rộng rãi trong công chúng nên chúng ta có thể dùng cho nhu cầu cá nhân và học tập.
+        </p>
+        <h2 id="collect">Thu Thập Thông Tin Tỷ Giá</h2>
+        <p>
+            Chúng ta sẽ thu thập tỷ giá của đồng Úc theo từng ngày trong tháng 6 và tháng 7 năm 2020 tại trang web sau đây https://portal.vietcombank.com.vn/Personal/TG/Pages/ty-gia.aspx
+            Khác với bài tập trước, ở bài tập này, chúng ta thấy khi ta chọn ngày khác thì url không thay đổi. Do đó rất khó dùng package <b><code>BeautifulSoup</code></b>
+            để thu thập dữ liệu. Chúng ta sẽ cùng một package khác, đó là <b><code>Selenium</code></b>.
+            Đầu tiên phải vào <a href="https://chromedriver.chromium.org/downloads">trang web này</a> để download webdriver.
+            Lưu ý, bạn phải cài đúng với version của Chrome trên máy bạn (check version của Chrome ở menu Help/About).
+            Giải nén và chép file đó vào 1 folder nào đó (không cần cài đặt). Sau đó import package như sau:
+        </p>
+        <pre>
+            <code class="python hljs">
+    from selenium import webdriver
+    driver = webdriver.Chrome('/path/to/chromedriver')
+            </code>
+        </pre>
+        <p>
+            Package <b><code>Selenium</code></b> có thể xem như là 1 cái máy điều khiển trình duyệt của chúng ta bằng code. Ngoài khả năng parse trang web
+            như <b><code>BeautifulSoup</code></b>, có thể giả lập hành động click chuột, gõ phím. Điều này sẽ giúp chúng ta tự động lấy data với quy mô lớn.
+            Trong bài này, bạn hãy giả lập hành động điền ngày tháng năm vào ô trống, sau đó nhấn Enter và áp dụng các phương pháp query html để lấy dữ liệu.
+        </p>
+        <h2 id="prepare">Tổ Chức Dữ Liệu</h2>
+        <p>
+            Sau khi bạn thu thập dữ liệu, bạn hãy lưu thành dạng csv có dạng sau đây:
+        <pre>
+            <code class="plaintext hljs">
+    date,rate
+    01/06/2020,16959.02
+    02/06/2020,16759.03
+            </code>
+    </pre> trong đó cột <code>date</code> ghi theo format dd/mm/yyyy, cột <code>rate</code> không ghi dấu phân cách hàng nghìn (dấu phẩy).
+        </p>
+        <h2 id="process">Xử Lý Dữ Liệu</h2>
+        <p>
+            Trong phần này, chúng ta sẽ thiết kế 1 hàm để tính lợi nhuận cao nhất ta có thể đạt được nếu cho trước 1 list các tỷ giá trong các ngày.
+            Input put sẽ là 1 list. Output sẽ là lợi nhuận cao nhất mà ta có thể đạt được.
+
+        </p>
+        <h2 id="require">Yêu Cầu Khi Nộp Bài</h2>
+        <ul>
+            <li>
+                File <code><b>exchange_rate.aud.06_2020.07_2020.csv</b></code> phải để trong folder <b><code>data</code></b>
+            </li>
+            <li>
+                Đoạn code tính lợi nhuận cao nhất phải nằm trong hàm <b><code>compute_max_profit</code></b> trong file <b><code>main.py</code></b>
+            </li>
+        </ul>
+
+        <hr />
+    </article>
+</main>
+</body>
+<script>
+    hljs.initHighlightingOnLoad();
+</script>
+</html>

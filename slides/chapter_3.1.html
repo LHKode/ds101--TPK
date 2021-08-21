@@ -1,0 +1,144 @@
+<!doctype html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+    <title>Data Science 101 - Chapter 2</title>
+
+    <link rel="stylesheet" href="lib/reveal.css">
+    <link rel="stylesheet" href="lib/theme/myplanet.css">
+    <link rel="stylesheet" href="css/main.css">
+    <!-- Theme used for syntax highlighting of code -->
+    <link rel="stylesheet" href="lib/zenburn.css">
+</head>
+<body>
+<div class="reveal pattern--random">
+    <div class="slides">
+        <section class="intro" id="intro">
+            <div class="logo-wrapper">
+                <div class="logo"><span class="visually-hidden">Data Science 101</span></div>
+            </div>
+        </section>
+        <section class="title" id="title">
+            <div class="grid-wrapper">
+                <div class="header">
+                    Khoa Công Nghệ Thông Tin <br/>
+                    Trường Đại học Sư Phạm TP.HCM - Việt Nam
+                </div>
+                <div class="content">
+                    <h1>Data Science 101</h1>
+                    <div class="description" style="font-size: 1.8em;">
+                        Phần 3.1. <br/>
+                        Loại Dữ Liệu <br/>
+                        Chưa Được Chuẩn Hóa<br/>
+                        (Unnormalised Data)
+                    </div>
+                </div>
+                <div class="credit">
+                    <hr/>
+                    <div class="label">Presented By</div>
+                    <div class="name">Nguyễn Đặng Kim Khánh</div>
+                    <div class="role">Giảng Viên trường ĐHSP TP.HCM</div>
+                </div>
+            </div>
+        </section>
+        <section class="color--dark">
+            <div class="grid-wrapper">
+                <div class="header">Data Science 101 / Unnormalised Data</div>
+                <div class="section">Định Nghĩa Unnormalised Data</div>
+                <div class="main" style="font-size: 1.8em;">
+                    <ul>
+                        <li>Thường dữ liệu trước khi đưa vào hệ thống, ta thường chuẩn hóa (scale về 1 miền giá trị nào đó)</li>
+                        <li>Dữ liệu chưa đi qua quá trình chuẩn hóa ta gọi là unnormalised data</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+        <section class="color--dark">
+            <div class="grid-wrapper">
+                <div class="header">Data Science 101 / Unnormalised Data</div>
+                <div class="section">Các Phương Pháp Chuẩn Hóa Dữ Liệu</div>
+                <div class="main" style="font-size: 1.8em;">
+                    <ul>
+                        <li>Thường người ta sẽ chuẩn hóa theo từng chiều của dữ liệu</li>
+                        <li>Linear Scaling: $\bar{x}=\frac{x-x_{min}}{x_{max}-x_{min}}\in\left[0,1\right]$</li>
+                        <li>Clipping: $\bar{x}=t_r$ if $x\ge t_r$ and $\bar{x}=t_l$ if $x\le t_l$ </li>
+                        <li>Log Scaling: $\bar{x}=\text{log}x$</li>
+                        <li>Z-score: $\bar{x}=\frac{x-\mu}{\sigma}$ trong đó $\mu$ là giá trị trung bình và $\sigma^2$ là phương sai</li>
+
+                    </ul>
+                </div>
+            </div>
+        </section>
+        <section class="subsection color--dark">
+            <div class="grid-wrapper">
+                <div class="header">Data Science 101 / Unnormalised Data</div>
+                <h1>Tại Sao Phải Chuẩn Hóa Dữ Liệu?</h1>
+                <div class="description">
+
+                </div>
+            </div>
+        </section>
+        <section class="color--dark">
+            <div class="grid-wrapper">
+                <div class="header">Data Science 101 / Unnormalised Data</div>
+                <div class="section">Lý Do Phải Chuẩn Hóa Dữ Liệu</div>
+                <div class="main" style="font-size: 1.8em;">
+                    <ul>
+                        <li>Avoid dominant feature/dimension</li>
+                        <li>Stabilise Training</li>
+                        <ul>
+                            <li>Tránh những lỗi numerical errors trong quá trình training</li>
+                            <li>Tránh hiện tượng exploding gradient trong những deep model</li>
+                        </ul>
+                    </ul>
+                </div>
+            </div>
+        </section>
+        <section class="subsection color--dark">
+            <div class="grid-wrapper">
+                <div class="header">Data Science 101 / Unnormalised Data</div>
+                <h1>Batch Normalisation</h1>
+                <div class="description">
+                    Nếu chúng ta đã normalise cho input layer thì hãy thử normalise cho hidden layer xem sao!
+                </div>
+            </div>
+        </section>
+        <section class="color--dark">
+            <div class="grid-wrapper">
+                <div class="header">Data Science 101 / Unnormalised Data</div>
+                <div class="section">Batch Normalisation</div>
+                <div class="main" style="font-size: 1.8em;">
+                    <ul>
+                        <li>(Deep) neural network gồm có input layer, output layer và các hidden layers</li>
+                        <li>Các hidden layers cũng tương tự như input layer, nếu dữ liệu không được normalised, chúng ta có thể khó train hơn</li>
+                        <li>Batch normalisation sẽ thực hiện Z-scale dựa vào mean và variance trong (mini-)batch hiện tại trong lúc train</li>
+                        <li>Để tạo batch normalisation layer, ta làm như sau</li>
+                        <pre><code class="python hljs" data-trim data-noescape>
+        from tensorflow.keras.layers import BatchNormalization
+
+        batch_norm_layer = BatchNormalization()(previous_layer)
+                        </code></pre>
+                        mỗi node sẽ có 4 tham số cần lưu trữ: mean, variance, scale, bias
+                    </ul>
+                </div>
+            </div>
+        </section>
+        <section class="subsection color--dark">
+            <div class="grid-wrapper">
+                <div class="header">Data Science 101</div>
+                <h1>Thắc Mắc và Trao Đổi</h1>
+                <div class="description">
+                </div>
+            </div>
+        </section>
+    </div>
+</div>
+<script src="lib/head.min.js"></script>
+<script src="lib/reveal.js"></script>
+<script src="lib/plugin/math/math.js"></script>
+<script src="lib/plugin/highlight/highlight.js"></script>
+<script src="lib/reveal-init.js"></script>
+</body>
+</html>

@@ -1,0 +1,369 @@
+<!doctype html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+    <title>Data Science 101 - Chapter 2</title>
+
+    <link rel="stylesheet" href="lib/reveal.css">
+    <link rel="stylesheet" href="lib/theme/myplanet.css">
+    <link rel="stylesheet" href="css/main.css">
+    <!-- Theme used for syntax highlighting of code -->
+    <link rel="stylesheet" href="lib/zenburn.css">
+</head>
+<body>
+<div class="reveal pattern--random">
+    <div class="slides">
+        <section class="intro" id="intro">
+            <div class="logo-wrapper">
+                <div class="logo"><span class="visually-hidden">Data Science 101</span></div>
+            </div>
+        </section>
+        <section class="title" id="title">
+            <div class="grid-wrapper">
+                <div class="header">
+                    Khoa Công Nghệ Thông Tin <br/>
+                    Trường Đại học Sư Phạm TP.HCM - Việt Nam
+                </div>
+                <div class="content">
+                    <h1>Data Science 101</h1>
+                    <div class="description" style="font-size: 1.8em;">
+                        Phần 3.1. <br/>
+                        Loại Dữ Liệu 2D<br/>
+                        (Image Data)
+                    </div>
+                </div>
+                <div class="credit">
+                    <hr/>
+                    <div class="label">Presented By</div>
+                    <div class="name">Nguyễn Đặng Kim Khánh</div>
+                    <div class="role">Giảng Viên trường ĐHSP TP.HCM</div>
+                </div>
+            </div>
+        </section>
+        <section class="color--dark">
+            <div class="grid-wrapper">
+                <div class="header">Data Science 101 / Image Data</div>
+                <div class="section">Tính Chất Image Data</div>
+                <div class="main" style="font-size: 1.8em;">
+                    <ul>
+                        <li>Image data là 1 array 3 chiều (width, height, channel)</li>
+                        <li>Mỗi pixel có mối quan hệ "trực tiếp" tới 8 pixels xung quanh</li>
+                        <li>Có nhiều hệ màu: RGB, RBG, CMYK, HSV, HSL + Alpha channel</li>
+                        <li>Có nhiều cách lưu trữ: JPEG/JPG, PNG, BMP</li>
+                        <ul>
+                            <li>Python có nhiều thư viện hỗ trợ việc đọc/ghi các định dạng file khác nhau</li>
+                            <li>Ví dụ thư viện PIL</li>
+                            <pre><code class="python hljs" data-trim data-noescape>
+        from PIL import Image
+
+        image = Image.open('a.jpg')
+        numpy_array = np.array(image)
+        image.save('b.png')
+                    </code></pre>
+                        </ul>
+                    </ul>
+                </div>
+            </div>
+        </section>
+        <section class="subsection color--dark">
+            <div class="grid-wrapper">
+                <div class="header">Data Science 101 / Image Data</div>
+                <h1>Convolutional (2D) Layer</h1>
+                <div class="description">
+                    "Làm sao để ghi nhận mối quan hệ spatial giữa các điểm ảnh?"
+                </div>
+            </div>
+        </section>
+        <section class="team color--dark">
+            <div class="grid-wrapper">
+                <div class="header">Data Science 101 / Image Data</div>
+                <div class="section">Thành Phần Cơ Bản trong Convolutional (2D) Layer</div>
+                <div class="column" style="font-size: 1.4em;">
+                    <div>
+                        <ul>
+                            <li>Convolutional layer có các filters</li>
+                            <li>Các filters này có cùng kích thước $m\times n$ (được gọi là kernel size)</li>
+                            <li>Xác trường hợp ta có 1 filter, output được tính theo công thức sau</li>
+                            \[\begin{aligned}
+                            o_{i,j}=\phi\left(\sum_{m,n} f_{m,n}x_{i+m,j+n} + b\right)
+                            \end{aligned} \]
+                            trong đó <br/>
+                            $x_{i+m,j+n}$ là giá trị tại ví trị $\left(i+m,j+n\right)$ của input layer<br/>
+                            $f_{m,n}$ là giá trị tại $\left(m,n\right)$ của filter đó<br/>
+                            và $\phi\left(\cdot\right)$ là hàm activation
+                            <li>Các giá trị trong filter và $b$ là các tham số cần học</li>
+                        </ul>
+                    </div>
+                    <div>
+                        <img src="media/convolution-example-matrix.gif" /><br/>
+                        <div style="font-size: 0.4em; display: block">https://www.learnopencv.com/image-classification-using-convolutional-neural-networks-in-keras/</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <section class="color--dark">
+            <div class="grid-wrapper">
+                <div class="header">Data Science 101 / Image Data</div>
+                <div class="section">Khái Niệm Padding và Strides trong Convolutional (2D) Layer</div>
+                <div class="main" style="font-size: 1.8em;">
+                    <li>Stride là bước nhảy. Padding có 2 loại: same và valid </li>
+                    <table style="margin-top: 0.5em">
+                        <tr style="border-bottom: none;">
+                            <td style="border-bottom: none;"><img src="media/no_padding_no_strides.gif" style="width:8em;height:8em;" /></td>
+                            <td style="border-bottom: none;"><img src="media/no_padding_strides.gif" style="width:8em;height:8em;" /> </td>
+                            <td style="border-bottom: none;"><img src="media/same_padding_no_strides.gif" style="width:8em;height:8em;" /></td>
+                        </tr>
+                        <tr style="font-size: 0.4em;">
+                            <td style="text-align: center; ">padding="valid", strides=1</td>
+                            <td style="text-align: center; ">padding="valid", strides=2</td>
+                            <td style="text-align: center; ">padding="same", strides=1</td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+        </section>
+        <section class="team color--dark">
+            <div class="grid-wrapper">
+                <div class="header">Data Science 101 / Image Data</div>
+                <div class="section">Nhiều Channels và Filters</div>
+                <div class="column" style="font-size: 1.8em;">
+                    <div>
+                        <li>#input channels = # filter channels </li>
+                        <li>Số filter là số channel ở tầng output </li>
+                        <li>Thường các tầng cuối sẽ có nhiều filters</li>
+                        <img src="media/cnn.png" style="width: 16em; margin: 1em auto;"/>
+                        <div style="font-size: 0.3em;">Combinido, Jay Samuel et al. “A Convolutional Neural Network Approach for Estimating Tropical Cyclone Intensity Using Satellite-based Infrared Images.”
+                            <br/>The 24th International Conference on Pattern Recognition (ICPR) (2018): 1474-1480</div>
+                    </div>
+                    <div>
+                        <img src="media/multifilters.png" style="width: 15em;"/>
+                        <a href="https://cs231n.github.io/convolutional-networks/" style="font-size:0.5em;">https://cs231n.github.io/convolutional-networks/</a>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <section class="color--dark">
+            <div class="grid-wrapper">
+                <div class="header">Data Science 101 / Image Data</div>
+                <div class="section">Cách Khai Báo Convolutional (2D) Layer trong Keras</div>
+                <div class="main" style="font-size: 1.8em;">
+                    <ul>
+                        <li>Import thư viện cần thiết</li>
+                        <pre><code class="python hljs" data-trim data-noescape>
+        from tensorflow.keras.layers import Conv2D
+                        </code></pre>
+                        <li>Định nghĩa convolutional layer</li>
+                        <pre><code class="python hljs" data-trim data-noescape>
+        conv_layer_1 = Conv2D(filters=8, kernel_size=[4, 4], padding='valid', activation='relu')(previous_layer)
+                        </code></pre>
+                    </ul>
+                </div>
+            </div>
+        </section>
+        <section class="subsection color--dark">
+            <div class="grid-wrapper">
+                <div class="header">Data Science 101 / Image Data</div>
+                <h1>Pooling Layers</h1>
+                <div class="description">
+                    "Não người không cần ghi nhớ từng pixel, nó chỉ cần nhớ những đường nét đặc trưng"
+                </div>
+            </div>
+        </section>
+        <section class="color--dark">
+            <div class="grid-wrapper">
+                <div class="header">Data Science 101 / Image Data</div>
+                <div class="section">Pooling Layers</div>
+                <div class="main" style="font-size: 1.8em;">
+                    <ul>
+                        <li>Pooling layer sẽ giúp chúng ta tổng quát hóa các điểm ảnh xung quanh nó</li>
+                    <pre><code class="python hljs" data-trim data-noescape>
+        from tensorflow.keras.layers import MaxPooling2D, AveragePooling2D
+
+        max_pooling_1 = MaxPooling2D(pool_size=[2, 2], padding="same")(previous_layer)
+        avg_pooling_1 = AveragePooling2D(pool_size=[2, 2], padding="valid")(previous_layer)
+                    </code></pre>
+                    trong đó pool_size là kích thước 1 block cần gộp
+                    </ul>
+                    <div style="margin: 1em auto; width: 30em; display: block">
+                        <img src="media/2d_max_pooling_pa1.png" />
+                        <div style="font-size: 0.2em; text-align: center">https://peltarion.com/knowledge-center/documentation/modeling-view/build-an-ai-model/blocks/2d-max-pooling-block</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <section class="subsection color--dark">
+            <div class="grid-wrapper">
+                <div class="header">Data Science 101 / Image Data</div>
+                <h1>Data Augmentation</h1>
+                <div class="description">
+                    "Làm gì khi ta có ít dữ liệu để train?"
+                </div>
+            </div>
+        </section>
+        <section class="color--dark">
+            <div class="grid-wrapper">
+                <div class="header">Data Science 101 / Image Data</div>
+                <div class="section">Nguyên Lý Data Augmentation</div>
+                <div class="main" style="font-size: 1.8em;">
+                    <ul>
+                        <li>Ta có thể apply 1 số kĩ thuật transformation hình để làm giàu training data</li>
+                        <ul>
+                            <li>Linear Shift</li>
+                            <li>Zoom, Crop</li>
+                            <li>Rotation</li>
+                            <li>Flip</li>
+                            <li>Add noise</li>
+                            <li>...</li>
+                        </ul>
+                        <li>Lưu ý tránh những phép transformation làm label không còn đúng nữa</li>
+                    </ul>
+
+                </div>
+            </div>
+        </section>
+        <section class="color--dark">
+            <div class="grid-wrapper">
+                <div class="header">Data Science 101 / Image Data</div>
+                <div class="section">Data Augmentation trong Keras</div>
+                <div class="main" style="font-size: 1.8em;">
+                    <ul>
+                        <li>Có nhiều hướng tiếp cận:</li>
+                        <ul>
+                            <li>Dùng ImageDataGenerator (xem thêm <a href="https://keras.io/api/preprocessing/image/">tại đây</a>)</li>
+                            <li>Tạo generator riêng kế thừa từ <code>tensorflow.keras.utils.Sequence</code></li>
+                            <li>Kết hợp cách 2 với package <code>imgaug</code>. Cài đặt package bằng câu lệnh sau</li>
+                            <pre><code class="bash hljs" data-trim data-noescape>
+        conda activate ds101
+        pip install imgaug
+                    </code></pre>
+                        </ul>
+                    </ul>
+
+                </div>
+            </div>
+        </section>
+        <section class="color--dark">
+            <div class="grid-wrapper">
+                <div class="header">Data Science 101 / Image Data</div>
+                <div class="section">Kế Thừa Sequence trong tensorflow.keras.utils</div>
+                <div class="main" style="font-size: 1.8em;">
+                    <ul>
+                        <li>Ta có thể kế thừa lớp Sequence để xây dựng data generator theo ý muốn của ta</li>
+                        <li>Ta cần implement 3 hàm:</li>
+                        <ul>
+                            <li><code style="color: #F25930">__len__</code>: trả về tổng số batches trong 1 epoch</li>
+                            <li><code style="color: #F25930">__getitem__</code>: trả về (mini-)batch chứa data và labels</li>
+                            <li><code style="color: #F25930">on_epoch_end</code>: hậu xử lý sau 1 epoch (ví dụ shuffle data)</li>
+                        </ul>
+                    </ul>
+
+                </div>
+            </div>
+        </section>
+        <section class="color--dark">
+            <div class="grid-wrapper">
+                <div class="header">Data Science 101 / Image Data</div>
+                <div class="section">Kế Thừa Sequence trong tensorflow.keras.utils (cont.)</div>
+                <div class="main" style="font-size: 1.8em;">
+                            <pre><code class="python hljs" data-trim data-noescape>
+        import numpy as np
+        from tensorflow.keras.utils import Sequence
+
+
+        class DataGenerator(Sequence):
+            def __init__(self, batch_size, original_images, labels):
+                self.batch_size = batch_size
+                self.original_images = original_images
+                self.labels = labels
+
+                self.num_images = original_images.shape[0]
+                self.indices = np.random.permutation(self.num_images)
+
+            def on_epoch_end(self):
+                self.indices = np.random.permutation(self.num_images)
+
+            def __len__(self):
+                return int(self.num_images / self.batch_size)
+
+            def __getitem__(self, index):
+                batch_indices = self.indices[index: index + self.batch_size]
+                batch_images = self.original_images[batch_indices] / 255.
+                batch_labels = self.labels[batch_indices]
+                return batch_images, batch_labels
+
+                    </code></pre>
+                </div>
+            </div>
+        </section>
+        <section class="color--dark">
+            <div class="grid-wrapper">
+                <div class="header">Data Science 101 / Image Data</div>
+                <div class="section">Sử Dụng Thư Viện <code>imgaug</code></div>
+                <div class="main" style="font-size: 1.8em;">
+                    <ul>
+                        <li>Import thư viện cần thiết</li>
+                        <pre><code class="bash hljs" data-trim data-noescape>
+        from imgaug import augmenters as iaa
+                    </code></pre>
+                        <li>Định nghĩa đối tượng chứa danh sách các phép biến đổi.
+                            Xem thêm các phép biến đổi <a href="https://imgaug.readthedocs.io/en/latest/source/overview_of_augmenters.html">tại đây</a></li>
+                        <pre><code class="bash hljs" data-trim data-noescape>
+        preprocessor = iaa.Sequential([
+            iaa.Rotate(rotate=[-5, 5]),
+            iaa.TranslateX(px=[-10, 10]),
+            iaa.TranslateY(px=[-10, 10]),
+            iaa.ShearX((-10, 10)),
+            iaa.ShearY((-10, 10)),
+            iaa.ScaleX(scale=[1, 1.2]),
+            iaa.ScaleY(scale=[1, 1.2]),
+            iaa.AdditiveGaussianNoise(),
+            iaa.GaussianBlur(),
+        ], random_order=True)
+                    </code></pre>
+
+                    </ul>
+
+                </div>
+            </div>
+        </section>
+        <section class="color--dark">
+            <div class="grid-wrapper">
+                <div class="header">Data Science 101 / Image Data</div>
+                <div class="section">Sử Dụng Thư Viện <code>imgaug</code> (cont.)</div>
+                <div class="main" style="font-size: 1.8em;">
+                    <ul>
+                        <li>Gọi đối tượng preprocessor (đã định nghĩa ở slide trước) với input là numpy array. Ví dụ như sau:</li>
+                        <pre><code class="bash hljs" data-trim data-noescape>
+        def __getitem__(self, index):
+            batch_indices = self.indices[index: index + self.batch_size]
+            batch_images = self.original_images[batch_indices]
+            <span style="color: #e7ad52">batch_preprocessed_images = self.preprocessor(images=batch_images) / 255.</span>
+            batch_labels = self.labels[batch_indices]
+
+            return batch_preprocessed_images, batch_labels
+                    </code></pre>
+
+                    </ul>
+
+                </div>
+            </div>
+        </section>
+        <section class="subsection color--dark">
+            <div class="grid-wrapper">
+                <div class="header">Data Science 101</div>
+                <h1>Thắc Mắc và Trao Đổi</h1>
+                <div class="description">
+                </div>
+            </div>
+        </section>
+    </div>
+</div>
+<script src="lib/head.min.js"></script>
+<script src="lib/reveal.js"></script>
+<script src="lib/plugin/math/math.js"></script>
+<script src="lib/plugin/highlight/highlight.js"></script>
+<script src="lib/reveal-init.js"></script>
+</body>
+</html>

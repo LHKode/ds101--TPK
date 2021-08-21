@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Exercise 00 - Data Science 101</title>
+    <link rel="stylesheet" href="css/style.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.2/styles/solarized-dark.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.2/highlight.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.2/languages/python.min.js"></script>
+</head>
+<body id="top">
+<header>
+    <h1>Exercise 00</h1>
+    <p class="author">Data Science 101<br />August 2021
+    </p>
+</header>
+<div class="abstract">
+    <p>
+        Trong bài tập này chúng ta sẽ ôn lại một chút về <code>Python</code>.
+    </p>
+</div>
+<main>
+    <article>
+        <h2 id="getting-started">Lời Mở Đầu</h2>
+        <p>
+            Hiện nay hầu hết các projects về Data Science đều được viết bằng Python trước (sau đó mới chuyển sang các ngôn ngữ khác, ví dụ C/C++ khi
+            deploy). Lý do nhiều người chọn Python là vì code khá đơn giản (so với các ngôn ngữ khác) và hỗ trợ nhiều thư viện cho Data Science.
+            Ngoài ra, Python còn hỗ trợ lập trình thủ tục (procedural programming), lập trình hàm (functional programming), lập trình hướng đối tượng
+            (object-oriented programming). Bên cạnh đó, Python hỗ trợ nhiều cách chạy chương trình: command line,
+            interactive mode, python notebook.
+        </p>
+        <h2 id="intro">Lập Trình theo Hướng Module Hóa</h2>
+        <p>
+            Đây là cách giúp các bạn có thể làm việc nhóm, giúp dự án của bạn được chia nhỏ ra thành những module nhỏ. Từ đó có thể phân chia công
+            việc và dễ dàng debug khi cần thiết. Một project của Python có thể chia nhỏ thành các namespaces/packages. Mỗi namespace là các folder trong project.
+            Trong các folder đó sẽ có chứa file __init__.py. Mỗi file .py sẽ là 1 module nhỏ trong namespace/package tương ứng.
+            Trong 1 file .py, ta có thể định nghĩa nhiều functions, classes.
+        </p>
+        <h2 id="task">Nhiệm Vụ Chuẩn Hóa Danh Sách Lớp</h2>
+        <p>
+            Giả sử chúng ta có 1 danh sách lớp được lưu trong file csv. File csv này sẽ có header 1 cột duy nhất là full name.
+            File này sẽ chứa họ tên của các bạn trong lớp. Ví dụ như sau:
+        </p>
+            <pre>
+                <code class="plaintext hljs">
+    full_name
+    Trương Ðức KHiêm
+    Dương Vũ   TườnG Minh
+    Cao Nguyễn BẢO Lâm
+                </code>
+            </pre>
+        <p>
+            Nhiệm vụ của chúng ta là chuẩn hóa việc viết hoa. Chỉ những kí tự đầu của mỗi từ mới được viết hoa. Giữa hai từ chỉ có đúng 1
+            khoảng trắng. Kế đó ta cần tách họ tên thành first name, middle name và last name. Việc tách theo nguyên tắc sau:
+            <ul>
+                <li>Nếu họ tên chỉ có 1 từ. Từ đó sẽ là last name. First name và middle name sẽ là chuỗi rỗng.</li>
+                <li>Nếu họ tên có 2 từ thì từ bên trái là last name, từ bên phải là first name. Middle name là chuỗi rỗng.</li>
+                <li>Nếu họ tên có từ 3 từ trở lên thì 1 từ bên trái là last name, 1 từ bên phải là first name. Còn lại là middle name.</li>
+            </ul>
+        </p>
+        <p>
+            Sau đó chúng ta cần sắp xếp danh sách lớp theo thứ tự tăng dần của first name. Nếu trùng first name thì sẽ so sánh last name.
+            Nếu trùng last name thì ta sẽ so sánh tiếp middle name.
+        </p>
+        <h2 id="instruction">Hướng Dẫn Làm Bài</h2>
+        <p>
+            Để hoàn thành nhiệm vụ này, chúng ta nên tách ra thành 2 công việc nhỏ: chuẩn hóa họ tên và sắp xếp danh sách. Chúng ta sẽ xây dựng
+            2 hàm <code>standardize_name</code> và <code>sort_student_list</code>. Để tiện cho việc chấm bài tự động, các bạn hãy để trong file
+            <code>utils.py</code> nhé.
+        </p>
+        <p>
+            Hàm <code>standardize_name</code> nhận input là 1 chuỗi string và ta sẽ trả về 3 chuỗi string: last name, middle name, first name.
+            Trong Python hỗ trợ xử lý chuỗi string rất tốt. Do đó, chỉ cần vài câu lệnh là bạn có thể làm việc này.
+        </p>
+        <pre>
+            <code class="python hljs">
+    def standardize_name(full_name):
+        # tách tên và chuẩn hóa viết hoa
+        list_names = [name.capitalize() for name in full_name.split()]
+        last_name = list_names[0]
+        first_name = list_names[-1] if len(list_names) > 1 else ""
+        middle_name = ' '.join(list_names[1:-1]) if len(list_names) > 2 else ""
+        # hàm join để nối 1 list thành 1 chuỗi string
+        return last_name, middle_name, first_name
+            </code>
+        </pre>
+        <p>
+            Hàm <code>sort_student_list</code> sẽ nhận 1 đường dẫn file csv chứa danh sách họ tên của lớp và 1 đường dẫn file csv mới.
+            Trong file csv mới này sẽ có 3 cột: <code>last_name</code>, <code>middle_name</code>, <code>first_name</code>. Để đọc file csv,
+            ta sẽ dùng thư viện <code><b>pandas</b></code>. Với thư viện này, chúng ta có nhiều hàm hỗ trợ các thao tác chỉnh sửa, sắp xếp
+            trên danh sách lớp.
+        </p>
+        <pre>
+            <code class="python hljs">
+    import pandas as pd
+    def sort_student_list(input_file_path, output_file_path):
+        df = pd.read_csv(input_file_path)  # load file csv
+
+        # apply hàm standardize_name cho column full_name
+        df['last_middle_first'] = df['full_name'].apply(standardize_name)
+        df_new = pd.DataFrame(
+                df['last_middle_first'].tolist(),
+                columns=['last_name', 'middle_name', 'first_name']
+        )  # tạo mới data frame
+
+        df_new = df_new.sort_values(by=['first_name', 'last_name', 'middle_name'])  # sắp xếp danh sách
+        df_new.to_csv(output_file_path, index=False)  # lưu xuống output_file_path
+            </code>
+        </pre>
+
+        <h2 id="require">Yêu Cầu Khi Nộp Bài</h2>
+        <ul>
+            <li>
+                Implement 2 functions <code><b>standardize_name</b></code>, <code><b>sort_student_list</b></code> trong file <code><b>utils.py</b></code>
+            </li>
+            <li>
+                Hàm <code><b>standardize_name</b></code> nhận 1 chuỗi string chứ họ tên và return last name, middle name, first name
+            </li>
+            <li>
+                Hàm <code><b>sort_student_list</b></code> nhận 2 inputs là: input_file_path là đường dẫn chứa file danh sách gốc và output_file_path là đường
+                dẫn để lưu file danh sách sau khi đã sắp xếp. File này phải có đủ 3 cột đặt tên như sau: <code><b>last_name</b></code>,
+                <code><b>middle_name</b></code>, <code><b>first_name</b></code>
+            </li>
+        </ul>
+        <hr />
+    </article>
+</main>
+</body>
+<script>
+    hljs.initHighlightingOnLoad();
+</script>
+</html>

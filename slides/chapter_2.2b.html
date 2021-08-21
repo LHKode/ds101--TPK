@@ -1,0 +1,386 @@
+<!doctype html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+    <title>Data Science 101 - Chapter 2</title>
+
+    <link rel="stylesheet" href="lib/reveal.css">
+    <link rel="stylesheet" href="lib/theme/myplanet.css">
+
+    <!-- Theme used for syntax highlighting of code -->
+    <link rel="stylesheet" href="lib/zenburn.css">
+</head>
+<body>
+<div class="reveal pattern--random">
+    <div class="slides">
+        <section class="intro" id="intro">
+            <div class="logo-wrapper">
+                <div class="logo"><span class="visually-hidden">Data Science 101</span></div>
+            </div>
+        </section>
+        <section class="title" id="title">
+            <div class="grid-wrapper">
+                <div class="header">
+                    Khoa Công Nghệ Thông Tin <br/>
+                    Trường Đại học Sư Phạm TP.HCM - Việt Nam
+                </div>
+                <div class="content">
+                    <h1>Data Science 101</h1>
+                    <div class="description" style="font-size: 1.3em;">
+                        Phần 2.2b. <br/>
+                        Generative Model <br/>
+                        (Mô hình sinh dữ liệu)
+                    </div>
+                </div>
+                <div class="credit">
+                    <hr/>
+                    <div class="label">Presented By</div>
+                    <div class="name">Nguyễn Đặng Kim Khánh</div>
+                    <div class="role">Giảng Viên trường ĐHSP TP.HCM</div>
+                </div>
+            </div>
+        </section>
+        <section class="subsection color--dark">
+            <div class="grid-wrapper">
+                <div class="header">Data Science 101</div>
+                <h1>Generative Model vs. Discriminative Model </h1>
+                <div class="description">
+                </div>
+            </div>
+        </section>
+        <section class="color--dark">
+            <div class="grid-wrapper">
+                <div class="header">Data Science 101 / Generative Model</div>
+                <div class="section">Generative Model vs. Discriminative Model</div>
+                <div class="main" style="font-size: 1.8em;">
+                    <ul>
+                        <li>Discriminative models capture the conditional probability $p\left(\textbf{y}\mid\textbf{x}\right)$</li>
+                        <li>Generative models capture the joint probability $p\left(\textbf{x},\textbf{y}\right)$, or
+                            just $p\left(\textbf{x}\right)$ if there are no labels.</li>
+                        <ul>
+                            <li>But, how to describe $p\left(\textbf{x},\textbf{y}\right)$, or $p\left(\textbf{x}\right)$?</li>
+                        </ul>
+                    </ul>
+                </div>
+            </div>
+        </section>
+        <section class="subsection color--dark">
+            <div class="grid-wrapper">
+                <div class="header">Data Science 101</div>
+                <h1>Generative Adversarial Networks (GANs)</h1>
+                <div class="description">
+                </div>
+            </div>
+        </section>
+        <section class="team color--dark">
+            <div class="grid-wrapper">
+                <div class="header">Data Science 101 / Generative Model</div>
+                <div class="section">Định Nghĩa Bài Toán</div>
+                <div class="column" style="font-size: 1.8em;">
+                    <div>
+                        <ul>
+                            <li>Ta có training set $\mathcal{D}$ chứa các sample $\textbf{x}_1,\ldots,\textbf{x}_N\in\mathcal{X}$</li>
+                            <li>Ta cần generate ra các sample <b style="color:chocolate">khác</b> trong tập $\mathcal{X}$. Cụ thể hơn là:</li>
+                            <ul>
+                                <li>Ta cần xây dựng hàm $f$ nhận input là $\textbf{z}$ và output là $\textbf{x}\in\mathcal{X}$. </li>
+                                <li>Thường $\textbf{z}$ thường là 1 vector ngẫu nhiên sample từ 1
+                                    multivariate normal distribution $\mathcal{N}\left(\textbf{0},\textbf{I}\right)$ có số chiều nhỏ hơn $\mathcal{X}$</li>
+                            </ul>
+                        </ul>
+                    </div>
+                    <div>
+                        <img src="media/GANs.png" style="background-color: gainsboro" />
+                        <span style="font-size: 0.4em;">https://sthalles.github.io/intro-to-gans/</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <section class="team color--dark">
+            <div class="grid-wrapper">
+                <div class="header">Data Science 101 / Generative Model</div>
+                <div class="section">Ý Tưởng Huấn Luyện GANs</div>
+                <div class="column" style="font-size: 1.8em;">
+                    <div>
+                        <img src="media/train_gan_1.png" style="background-color: gainsboro" />
+                        <span style="font-size: 0.4em;">https://mc.ai/connectome-ai-meetup-3-generative-adversarial-networks-gan/</span>
+                    </div>
+                    <div>
+                        <img src="media/train_gan_2.png" style="background-color: gainsboro" />
+                    </div>
+                </div>
+            </div>
+        </section>
+        <section class="color--dark">
+            <div class="grid-wrapper">
+                <div class="header">Data Science 101 / Generative Model</div>
+                <div class="section">Ý Tưởng Huấn Luyện GANs (cont.)</div>
+                <div class="main" style="font-size: 1.8em;">
+                    <ul>
+                        <li>Ta cần thêm 1 Discriminator (D) network để phân biệt real data và data được generated từ Generator (G) network </li>
+                        <li>Ta lần lượt thay phiên train Discriminator và Generator</li>
+                        <ul>
+                            <li>Train Discriminator sao cho có thể phân biệt real và fake data</li>
+                            <li>Train Generator sao cho làm Discriminator bị lú (fool)</li>
+                        </ul>
+                        <li>Dần dần Generator càng generate ra ảnh thật hơn và Discriminator sẽ khó khăn hơn để phân biệt thật và giả</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+        <section class="team color--dark">
+            <div class="grid-wrapper">
+                <div class="header">Data Science 101 / Generative Model</div>
+                <div class="section">Huấn Luyện Discriminator</div>
+                <div class="column" style="font-size: 1.6em;">
+                    <div>
+                        <ul>
+                            <li>Chỉ train (update weight) cho Discriminator, không train (không update weight) của Generator</li>
+                            <li>Training Data: real data (gán nhãn là 1) và fake data (gán nhãn là 0) (được randomly generate từ Generator)</li>
+                            <li>Discriminator loss: là 1 dạng classifcation loss. Ví dụ:</li>
+                            \[\begin{aligned}
+                            loss= -\text{log}\left(D\left(\textbf{x}\right)\right) - \text{log}\left(1-D\left(G\left(z\right)\right)\right)
+                            \end{aligned} \]
+                            trong đó $\textbf{x}\in\mathcal{D}$ và $z\sim\mathcal{N}\left(0,1\right)$
+                        </ul>
+                    </div>
+                    <div>
+                        <img src="media/gan_diagram_discriminator.svg" style="background-color: gainsboro" />
+                        <span style="font-size: 0.4em">https://developers.google.com/machine-learning/gan</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <section class="team color--dark">
+            <div class="grid-wrapper">
+                <div class="header">Data Science 101 / Generative Model</div>
+                <div class="section">Huấn Luyện Generator</div>
+                <div class="column" style="font-size: 1.6em;">
+                    <div>
+                        <ul>
+                            <li>Chỉ train (update weight) cho Generator, không train (không update weight) của Discriminator</li>
+                            <li>Training Data: $z\sim\mathcal{N}\left(0,1\right)$</li>
+                            <li>Generator loss: là 1 dạng loss khiến Discriminator bị lú (fool). Ví dụ:</li>
+                            \[\begin{aligned}
+                            loss= \text{log}\left(1-D\left(G\left(z\right)\right)\right)
+                            \end{aligned} \]
+                            trong đó $z\sim\mathcal{N}\left(0,1\right)$
+                        </ul>
+                    </div>
+                    <div>
+                        <img src="media/gan_diagram_generator.svg" style="background-color: gainsboro" />
+                        <span style="font-size: 0.4em">https://developers.google.com/machine-learning/gan</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <section class="subsection color--dark">
+            <div class="grid-wrapper">
+                <div class="header">Data Science 101</div>
+                <h1>Super-Resolution Generative Adversarial Network (SRGAN)</h1>
+                <div class="description">
+                </div>
+            </div>
+        </section>
+        <section class="team color--dark">
+            <div class="grid-wrapper">
+                <div class="header">Data Science 101 / Generative Model / Super-Resolution Generative Adversarial Network</div>
+                <div class="section">Phát Biểu Bài Toán</div>
+                <div class="column" style="font-size: 1.6em;">
+                    <div>
+                        <ul>
+                            <li>Ta muốn phóng to ảnh có độ phân giải thấp mà không bị vỡ hình</li>
+                            <li>Train Set: $\mathcal{D}=\left\{(\textbf{I}_n^{LR},\textbf{I}_n^{HR})\right\}_{n=1}^N$
+                                trong đó $(\textbf{I}_n^{LR},\textbf{I}_n^{HR})$ là 1 cặp hình (giống nội dung) chỉ khác
+                                độ phân giải, LR là low resolution, HR là high resolution.
+                            </li>
+                            <li>Input của model: $\textbf{I}^{LR}\notin\mathcal{D}$</li>
+                            <li>Output của model: ảnh có độ phân giải cao mà không bị vỡ hình</li>
+                        </ul>
+                    </div>
+                    <div>
+                        <img src="media/srgan1.png" style="background-color: gainsboro" />
+                        </div>
+
+                </div>
+                <span style="font-size: 0.7em; line-height:0.5em;">
+                    Ledig, Christian, et al.
+                    "Photo-realistic single image super-resolution using a generative adversarial network."
+                    Proceedings of the IEEE conference on Computer Vision and Pattern Recognition (CVPR). 2017.
+                </span>
+            </div>
+        </section>
+        <section class="team color--dark">
+            <div class="grid-wrapper">
+                <div class="header">Data Science 101 / Generative Model / Super-Resolution Generative Adversarial Network</div>
+                <div class="section">Hướng Tiếp Cận</div>
+                <div class="main" style="font-size: 1.6em;">
+                    <div style="text-align: center; margin-top: 1em;">
+                        <img src="media/srgan_network.png" style="background-color: gainsboro; width:70%; text-align: center; display: initial;" />
+                    </div>
+
+                </div>
+                <span style="font-size: 0.7em; line-height:0.5em;">
+                    Ledig, Christian, et al.
+                    "Photo-realistic single image super-resolution using a generative adversarial network."
+                    Proceedings of the IEEE conference on Computer Vision and Pattern Recognition (CVPR). 2017.
+                </span>
+            </div>
+        </section>
+        <section class="team color--dark">
+            <div class="grid-wrapper">
+                <div class="header">Data Science 101 / Generative Model / Super-Resolution Generative Adversarial Network</div>
+                <div class="section">Tổng Quát Hóa Bài Toán Mapping</div>
+                <div class="column" style="font-size: 1.8em; grid-auto-columns: auto 23%;">
+                    <div>
+                        <ul>
+                            <li>Ta cần xây dựng hàm $f$ biến data $\textbf{x}$ thuộc domain $\mathcal{X}$ thành
+                                data $\textbf{y}$ trong domain $\mathcal{Y}$ </li>
+                            <li>Train Set: $\mathcal{D}=\left\{(\textbf{x}_n,\textbf{y}_n)\right\}_{n=1}^N$
+                                trong đó $(\textbf{x}_n,\textbf{y}_n)$ là 1 cặp giống nội dung nhưng khác domain.
+                            </li>
+                            <li>Input của model: $\textbf{x}\notin\mathcal{D}$</li>
+                            <li>Output của model: tìm $\textbf{y}$ (ánh xạ của $\textbf{x}$ trong domain $\mathcal{Y}$)</li>
+                            <br/>
+                            <li>Nếu training set không thể tạo thành từng cặp thì sao?</li>
+                        </ul>
+                    </div>
+                    <div>
+                        <img src="media/image_translation_1.jpg" style="background-color: gainsboro; width: 100%; display: inline" />
+                        <img src="media/image_translation_2.jpg" style="background-color: gainsboro; width: 100%;" />
+                    </div>
+                </div>
+            </div>
+        </section>
+        <section class="subsection color--dark">
+            <div class="grid-wrapper">
+                <div class="header">Data Science 101</div>
+                <h1>Domain Translation - CycleGAN</h1>
+                <div class="description">
+                </div>
+            </div>
+        </section>
+        <section class="team color--dark">
+            <div class="grid-wrapper">
+                <div class="header">Data Science 101 / Generative Model / Domain Mapping</div>
+                <div class="section">Phát Biểu Bài Toán</div>
+                <div class="column" style="font-size: 1.6em;">
+                    <div>
+                        <ul>
+                            <li>Chúng ta cần xây dựng hàm $f$ chuyển $\textbf{x}$ thuộc domain $\mathcal{X}$ thành $\textbf{y}$
+                                trong domain $\mathcal{Y}$</li>
+                            <li>Ta có 2 training set: $\mathcal{D}_\mathcal{X}=\left\{\textbf{x}_1,\ldots\textbf{x}_N\right\}$
+                                và $\mathcal{D}_\mathcal{Y}=\left\{\textbf{y}_1,\ldots\textbf{y}_{N'}\right\}$.
+                                Không nhất thiết các data samples $\textbf{x}\in\mathcal{D}_\mathcal{X}$ và $\textbf{y}\in\mathcal{D}_\mathcal{Y}$
+                                tạo thành 1 cặp.
+
+                            </li>
+                            <li>Input của model: $\textbf{x}$ trong domain $\mathcal{X}$</li>
+                            <li>Output của model: tìm $\textbf{y}$ (ánh xạ của $\textbf{x}$ trong domain $\mathcal{Y}$)</li>
+                        </ul>
+                    </div>
+                    <div>
+                        <img src="media/horse_zebra.png" style="background-color: gainsboro; width: 80%;" />
+                    </div>
+
+                </div>
+                <span style="font-size: 0.7em; line-height:0.5em;">
+                    Zhu, Jun-Yan, et al. "Unpaired image-to-image translation using cycle-consistent adversarial networks."
+                    Proceedings of the IEEE International Conference on Computer Vision (ICCV). 2017.
+                </span>
+            </div>
+        </section>
+        <section class="team color--dark">
+            <div class="grid-wrapper">
+                <div class="header">Data Science 101 / Generative Model / Domain Mapping</div>
+                <div class="section">Hướng Tiếp Cận</div>
+                <div class="main" style="font-size: 1.6em;">
+                    <div style="text-align: center; margin-top: 1em;">
+                        <img src="media/CycleGAN.png" style="background-color: gainsboro; width:70%; text-align: center; display: initial;" />
+                    </div>
+
+                </div>
+                <span style="font-size: 0.7em; line-height:0.5em;">
+                    Zhu, Jun-Yan, et al. "Unpaired image-to-image translation using cycle-consistent adversarial networks."
+                    Proceedings of the IEEE International Conference on Computer Vision (ICCV). 2017.
+                </span>
+            </div>
+        </section>
+        <section class="color--dark">
+            <div class="grid-wrapper">
+                <div class="header">Data Science 101 / Generative Model / Domain Mapping</div>
+                <div class="section">Một Số Kết Quả</div>
+                <div class="main" style="font-size: 1.6em;">
+                    <div style="text-align: center; margin-top: 1em;">
+                        <img src="media/CycleGAN_ex.png" style="background-color: gainsboro; width:70%; text-align: center; display: initial;" />
+                    </div>
+
+                </div>
+                <span style="font-size: 0.7em; line-height:0.5em;">
+                    Zhu, Jun-Yan, et al. "Unpaired image-to-image translation using cycle-consistent adversarial networks."
+                    Proceedings of the IEEE International Conference on Computer Vision (ICCV). 2017.
+                </span>
+            </div>
+        </section>
+        <section class="subsection color--dark">
+            <div class="grid-wrapper">
+                <div class="header">Data Science 101</div>
+                <h1>Domain Adaptation</h1>
+                <div class="description">
+                </div>
+            </div>
+        </section>
+        <section class="team color--dark">
+            <div class="grid-wrapper">
+                <div class="header">Data Science 101 / Domain Adaptation</div>
+                <div class="section">Phát Biểu Bài Toán</div>
+                <div class="column" style="font-size: 1.6em;">
+                    <div>
+                        <ul>
+                            <li>Ta có training set $\mathcal{D}_{s}$ thuộc domain $\mathcal{S}$ đã có sẵn label</li>
+                            <li>Ta có training set $\mathcal{D}_{t}$ thuộc domain $\mathcal{T}$ có rất ít hoặc  không có label</li>
+                            <li>Ta cần train classifier cho domain $\mathcal{T}$</li>
+                            <br/>
+                            <li>Làm sao để tận dụng training set $\mathcal{D}_{s}$?</li>
+                        </ul>
+                    </div>
+                    <div>
+                        <img src="media/domain-adaptation-tasks.png" style="background-color: gainsboro; width: 100%;" />
+                    </div>
+                </div>
+            </div>
+        </section>
+        <section class="color--dark">
+            <div class="grid-wrapper">
+                <div class="header">Data Science 101 / Domain Adaptation</div>
+                <div class="section">Dùng Ý Tưởng của GAN để Giải Quyết</div>
+                <div class="main" style="font-size: 1.6em;">
+                    <div style="text-align: center; margin-top: 1em;">
+                        <img src="media/domain_adaptation.png" style="background-color: gainsboro; width:40%; text-align: center; display: initial;" />
+                    </div>
+
+                </div>
+                <span style="font-size: 0.7em; line-height:0.5em;">
+                    Pinheiro, Pedro O. "Unsupervised domain adaptation with similarity learning."
+                    Proceedings of the IEEE Conference on Computer Vision and Pattern Recognition (CVPR). 2018.
+                </span>
+            </div>
+        </section>
+        <section class="subsection color--dark">
+            <div class="grid-wrapper">
+                <div class="header">Data Science 101</div>
+                <h1>Thắc Mắc và Trao Đổi</h1>
+                <div class="description">
+                </div>
+            </div>
+        </section>
+    </div>
+</div>
+<script src="lib/head.min.js"></script>
+<script src="lib/reveal.js"></script>
+<script src="lib/plugin/math/math.js"></script>
+<script src="lib/plugin/highlight/highlight.js"></script>
+<script src="lib/reveal-init.js"></script>
+</body>
+</html>

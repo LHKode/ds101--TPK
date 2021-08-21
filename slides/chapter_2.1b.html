@@ -1,0 +1,145 @@
+<!doctype html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+    <title>Data Science 101 - Chapter 2</title>
+
+    <link rel="stylesheet" href="lib/reveal.css">
+    <link rel="stylesheet" href="lib/theme/myplanet.css">
+    <link rel="stylesheet" href="css/main.css">
+    <!-- Theme used for syntax highlighting of code -->
+    <link rel="stylesheet" href="lib/zenburn.css">
+</head>
+<body>
+<div class="reveal pattern--random">
+    <div class="slides">
+        <section class="intro" id="intro">
+            <div class="logo-wrapper">
+                <div class="logo"><span class="visually-hidden">Data Science 101</span></div>
+            </div>
+        </section>
+        <section class="title" id="title">
+            <div class="grid-wrapper">
+                <div class="header">
+                    Khoa Công Nghệ Thông Tin <br/>
+                    Trường Đại học Sư Phạm TP.HCM - Việt Nam
+                </div>
+                <div class="content">
+                    <h1>Data Science 101</h1>
+                    <div class="description" style="font-size: 1.8em;">
+                        Phần 2.1b. <br/>
+                        Bài Toán Hồi Quy <br/>
+                        (Regression)
+                    </div>
+                </div>
+                <div class="credit">
+                    <hr/>
+                    <div class="label">Presented By</div>
+                    <div class="name">Nguyễn Đặng Kim Khánh</div>
+                    <div class="role">Giảng Viên trường ĐHSP TP.HCM</div>
+                </div>
+            </div>
+        </section>
+        <section class="subsection color--dark">
+            <div class="grid-wrapper">
+                <div class="header">Data Science 101 / Regression</div>
+                <h1>Bước 1 & 2: Xác Định tập $\mathcal{X}$ and tập $\mathcal{Y}$</h1>
+                <div class="description">
+                    "Bất kì bài toán trong Tin Học, nếu ta không hiểu rõ input và output thì sẽ không giải được!"
+                </div>
+            </div>
+        </section>
+        <section class="color--dark">
+            <div class="grid-wrapper">
+                <div class="header">Data Science 101 / Regression</div>
+                <div class="section">Phát Biểu Bài Toán</div>
+                <div class="main" style="font-size: 1.8em;">
+                    <ul>
+                        <li>Input của hệ thống là 1 data samples $\textbf{x}$</li>
+                        <li>Output của hệ thống là giá trị $y$ tương ứng với dữ liệu $\textbf{x}$ đó</li>
+                        <li>Trong đó nhãn $y$ thuộc tập liên tục $\mathcal{Y}$</li>
+                        <ul>
+                            <li>Thường $\mathcal{Y}$ có cận trên và cận dưới</li>
+                            <li>Thường người ta sẽ scale $y$ về đoạn $\left[0, 1\right]$ hoặc $\left[-1, 1\right]$</li>
+                            <li>Đôi lúc người ta sẽ scale $\mathcal{Y}$ sao cho mean $\mu=0$ và phương sai $\sigma^2=1$ </li>
+                        </ul>
+                        <li>Thông thường, ta sẽ có 1 tập train đã được label sẵn</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+        <section class="subsection color--dark">
+            <div class="grid-wrapper">
+                <div class="header">Data Science 101 / Regression</div>
+                <h1>Bước 4: Xác Định Hàm Loss</h1>
+                <div class="description">
+                    "Hàm loss như là kim chỉ nam để ta tìm hàm $f$ phù hợp trong họ hàm $\mathcal{F}$"<br/>
+                </div>
+            </div>
+        </section>
+        <section class="color--dark">
+            <div class="grid-wrapper">
+                <div class="header">Data Science 101 / Regression</div>
+                <div class="section">Hàm Loss cho Bài Toán Regression </div>
+                <div class="main" style="font-size: 1.8em;">
+                    <ul>
+                        <li>Có rất nhiều loss cho bài toán regression</li>
+                        <ul>
+                            <li>Mean Squared Error: $\left(f\left(\textbf{x}\right) - y\right)^2$</li>
+                            <li>Mean Absolute Error: $\left|f\left(\textbf{x}\right) - y\right|$</li>
+                            <li>...</li>
+                        </ul>
+                        <li>Tất cả được định nghĩa trong <code>tensorflow.keras.losses</code>.
+                            Xem thêm <a href="https://keras.io/api/losses/regression_losses">tại đây</a></li>
+
+                    </ul>
+                </div>
+            </div>
+        </section>
+        <section class="subsection color--dark">
+            <div class="grid-wrapper">
+                <div class="header">Data Science 101 / Regression</div>
+                <h1>Bước 6: Evaluate</h1>
+                <div class="description">
+                    "Kiểm tra đánh giá để chắn chắn máy tính không học vẹt"<br/>
+                </div>
+            </div>
+        </section>
+        <section class="color--dark">
+            <div class="grid-wrapper">
+                <div class="header">Data Science 101 / Regression</div>
+                <div class="section">Evaluation Metrics</div>
+                <div class="main" style="font-size: 1.8em;">
+                    <ul>
+                        <li>Thường người ta sẽ scale lại giá trị gốc trước khi tính</li>
+                        <li>Các nhiều độ đo khác nhau:</li>
+                        <ul>
+                            <li>Mean Squared Error: $\frac{1}{N} \sum_{n=1}^{N}\left(y_n-\hat{y}_n\right)^2$</li>
+                            <li>Root Mean Squared Error: $\sqrt{\frac{\sum_{n=1}^{N}\left(y_n-\hat{y}_n\right)^2}{N}}$</li>
+                            <li>...</li>
+                            trong đó $y_n$ là groundtruth và $\hat{y}_n$ là giá trị output của system.
+                        </ul>
+                        <li>Tất cả trong <code>tensorflow.keras.metrics</code>. Xem thêm <a href="https://keras.io/api/metrics/regression_metrics">tại đây</a></li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+        <section class="subsection color--dark">
+            <div class="grid-wrapper">
+                <div class="header">Data Science 101</div>
+                <h1>Thắc Mắc và Trao Đổi</h1>
+                <div class="description">
+                </div>
+            </div>
+        </section>
+    </div>
+</div>
+<script src="lib/head.min.js"></script>
+<script src="lib/reveal.js"></script>
+<script src="lib/plugin/math/math.js"></script>
+<script src="lib/plugin/highlight/highlight.js"></script>
+<script src="lib/reveal-init.js"></script>
+</body>
+</html>

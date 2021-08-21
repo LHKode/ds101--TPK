@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Exercise 04 - Data Science 101</title>
+    <link rel="stylesheet" href="css/style.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.2/styles/solarized-dark.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.2/highlight.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.2/languages/python.min.js"></script>
+</head>
+<body id="top">
+<header>
+    <h1>Exercise 04</h1>
+    <p class="author">Data Science 101<br />September 2020
+    </p>
+</header>
+<div class="abstract">
+    <p>
+        Trong bài tập này chúng ta thử giải quyết bài toán classification về kí hiệu cử chỉ bàn tay. Thông qua đó, chúng ta sẽ hiểu cách làm việc với
+        dữ liệu hình ảnh, đồng thời sẽ hiểu về <code>Conv2D</code> layer trong thư viện <code>keras</code>.
+    </p>
+</div>
+<main>
+    <article>
+        <h2 id="getting-started">Lời Mở Đầu</h2>
+        <p>
+            Con người không những có khả năng lưu trữ hình ảnh qua con mắt của họ, họ còn có thể xử lý thông tin trong bức ảnh đó.
+            Hiện nay, máy tính sở hữu những cảm biến ánh sáng giúp nó có thể ghi nhận và lưu trữ hình ảnh chính xác từng pixels.
+            Tuy nhiên, việc xử lý thông tin trong hình ảnh là 1 thử thách đối với máy tính hiện nay.
+            Thử nghĩ xem, nếu tivi nhà bạn có thể hiểu những cử chỉ tay của bạn, khi đó bạn chỉ cần vẫy tay vài cái là nó hiểu bạn muốn nó làm gì.
+            Lúc đó remote tivi sẽ trở thành dĩ vãng. <label for="sn-1" class="sidenote-toggle sidenote-number"></label><input type="checkbox" id="sn-1" class="sidenote-toggle" />
+            <span class="sidenote">Lúc đó cả nhà bạn sẽ không cần tranh nhau cái remote tivi để chuyển kênh nữa. Mà nếu cả hai vợ chồng cùng vẫy tay thì nó
+                nên nghe lời ai nhỉ <nobr>(っ＾▿＾)۶🍸٩(˘◡˘ )</nobr></span>.
+        </p>
+        <p>Trong bài này chúng ta sẽ thử phân loại các cử chỉ của bàn tay thành 10 lớp khác nhau. Ví dụ như sau:</p>
+        <table style="margin: 2em auto">
+            <tr>
+                <td><img src="media/example_0.JPG"/></td>
+                <td><img src="media/example_1.JPG"/></td>
+                <td><img src="media/example_2.JPG"/></td>
+                <td><img src="media/example_3.JPG"/></td>
+                <td><img src="media/example_4.JPG"/></td>
+            </tr>
+            <tr>
+                <td style="text-align: center">0</td>
+                <td style="text-align: center">1</td>
+                <td style="text-align: center">2</td>
+                <td style="text-align: center">3</td>
+                <td style="text-align: center">4</td>
+            </tr>
+        </table>
+        <table style="margin: 2em auto">
+            <tr>
+                <td><img src="media/example_5.JPG"/></td>
+                <td><img src="media/example_6.JPG"/></td>
+                <td><img src="media/example_7.JPG"/></td>
+                <td><img src="media/example_8.JPG"/></td>
+                <td><img src="media/example_9.JPG"/></td>
+            </tr>
+            <tr>
+                <td style="text-align: center">5</td>
+                <td style="text-align: center">6</td>
+                <td style="text-align: center">7</td>
+                <td style="text-align: center">8</td>
+                <td style="text-align: center">9</td>
+            </tr>
+        </table>
+        <h2 id="dataset">Dataset</h2>
+        <p>
+            Hiện nay có 1 nhóm nghiên cứu đã đóng góp cho cộng đồng khoảng 2000 bức ảnh (với khoảng 200 bức cho mỗi lớp).
+            Dữ liệu gốc được đăng tải <a href="https://github.com/ardamavi/Sign-Language-Digits-Dataset">ở đây</a>.
+            Để tiện thực nghiệm, giáo viên hướng dẫn đã chia dữ liệu sẵn thành 3 tập train, validation, và test.
+            Các bạn có thể download <a href="https://drive.google.com/drive/folders/1RlgNrG6phmvqIUMGPnriLmTtNyE-Na4_?usp=sharing">tại đây</a>.
+            Và hãy nhớ rằng dành thời gian để tìm hiểu kĩ dataset trước khi làm việc nhé!
+        </p>
+        <h2 id="construction">Xây Dựng Lớp DataGenerator</h2>
+        <p>
+            Khi data không có quá nhiều, chúng ta hãy nghĩ đến những phương pháp làm giàu data của mình. Trước tiên, chúng ta cần có 1 data generator
+            để generate ra các dữ liệu ngay trong lúc train mà không cần phải store xuống ổ cứng. Có nhiều cách để chúng ta làm điều này.
+            Một trong số đó là xây dựng 1 lớp kết thừa từ lớp <code>tensorflow.keras.utils.Sequence</code><label for="sn-2" class="sidenote-toggle sidenote-number"></label>
+            <input type="checkbox" id="sn-2" class="sidenote-toggle" />
+            <span class="sidenote">Bạn có thể dùng cách khác. Việc train thế nào bạn hoàn toàn được quyền quyết định chiến lược.</span>.
+            Chúng ta cần implement 3 hàm <code>__len__</code>,
+            <code>__getitem__</code> và <code>on_epoch_end</code><label for="sn-3" class="sidenote-toggle sidenote-number"></label>
+            <input type="checkbox" id="sn-3" class="sidenote-toggle" />
+            <span class="sidenote">Thật ra không cần implement hàm <code>on_epoch_end</code> nếu bạn không muốn dữ liệu bị shuffle trong các epochs.</span>.
+        </p>
+        <p>
+            Trong hàm <code>__getitem__</code>, bạn có thể áp dụng các phương pháp biến đổi ảnh bất kì để làm giàu data của mình. Tuy nhiên, cần tránh những
+            phép biến đổi làm thay đổi label của dữ liệu hoặc làm dữ liệu bị biến dạng quá nhiều (đến mức ngay cả chúng ta cũng không biết phân loại dữ liệu đó
+            vô lớp nào). Chúng ta có thể tự viết code hoặc có thể sử dụng thư viện <code>imgaug</code>. Xem thêm hướng dẫn sử dụng trong slide bài giảng hoặc
+            chi tiết ở <a href="https://imgaug.readthedocs.io/">trang web này</a>.
+        </p>
+        <h2 id="exam">Cách Chấm Điểm</h2>
+        <p>
+            Khi bài được submit lên, hệ thống sẽ khởi tạo đối tượng từ lớp <code><b>GestureClassifier</b></code>. Kế đó sẽ gọi hàm <code><b>load_model</b></code>.
+            Hệ thống sẽ load 1 bộ test bí mật và sẽ truyền vào hàm <code><b>predict</b></code> để get output từ model của bạn.
+            Nếu output khớp với groundtruth thì bạn sẽ được điểm.
+            Good luck!
+
+        <hr />
+    </article>
+</main>
+</body>
+<script>
+    hljs.initHighlightingOnLoad();
+</script>
+</html>

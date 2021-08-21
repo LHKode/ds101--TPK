@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Exercise 05 - Data Science 101</title>
+    <link rel="stylesheet" href="css/style.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.2/styles/solarized-dark.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.2/highlight.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.2/languages/python.min.js"></script>
+</head>
+<body id="top">
+<header>
+    <h1>Exercise 05</h1>
+    <p class="author">Data Science 101<br />September 2020
+    </p>
+</header>
+<div class="abstract">
+    <p>
+        Trong bài tập này chúng ta thử giải quyết bài toán <code>Object Detection</code>, mà cụ thể là chúng ta sẽ giúp máy tính detect khuôn mặt
+        của các con mèo trong một bức hình nào đó. Đây cũng là dịp để các bạn làm việc với dữ liệu tương đối lớn.
+    </p>
+</div>
+<main>
+    <article>
+        <h2 id="getting-started">Lời Mở Đầu</h2>
+        <p>
+            Một công ty chuyên bán thức ăn cho mèo đang muốn đầu tư mạo hiểm vào một thị trường mới. Họ định thiết kế và bán các máy tự động
+            cho mèo ăn. Khi con mèo tới, nó sẽ tự động nhả thức ăn cho nó. Ngoài ra, nếu nhà có nhiều con mèo, nó sẽ phân biệt đâu là con mèo nào.
+            Dựa vào mức độ béo phì và tần suất ăn của từng con mèo, nó sẽ có chế độ dinh dưỡng cho từng con. Kế hoạch của họ rất tham vọng.
+            Có nhiều bài toán cần phải giải quyết trước khi họ ra mắt thị trường. Tuy nhiên, bài toán đầu tiên mà họ cần phải giải là xác định được
+            vị trí khuôn mặt của con mèo trong khung hình camera. Với vai trò là một data scientist/engineer, bạn hãy giúp công ty đó nhé<span class="sidenote">
+            Tất nhiên nếu họ bán được sản phẩm, họ sẽ chia lợi nhuận cho bạn, còn không bán được thì ... </span>.
+        </p>
+        <h2 id="dataset">Dataset</h2>
+        <p>
+            Rất may, bạn đã có dataset được label sẵn vị trí khuôn mặt của con mèo trong khung hình. Dữ liệu gốc được đăng tải
+            <a href="https://archive.org/details/CAT_DATASET">ở đây</a>.
+            Để tiện thực nghiệm, giáo viên hướng dẫn đã chia dữ liệu sẵn thành 2 tập train và validation. Đồng thời sẽ tạo bounding box cho khuôn mặt mèo.
+            Các bạn có thể download <a href="https://drive.google.com/file/d/1X6Dh9tb7D-O2geMoyugqp1amRSYMozIR/view?usp=sharing">tại đây</a>.
+            Và hãy nhớ rằng dành thời gian để tìm hiểu kĩ dataset trước khi làm việc nhé!
+        </p>
+        <p>
+            Một điểm lưu ý là, label của họ không chính xác! Ví dụ, trong một hình có 2 con mèo, nhưng họ chỉ label 1 con mèo. Ngoài ra, dataset cũng đa
+            dạng về kích thước và chất lượng ảnh.
+        </p>
+        <h2 id="models">Pretrained Models</h2>
+        <p>
+            Để ra kết quả tốt, bạn cần sử dụng pretrained models. Đây là những models đã được train object detection trên tập COCO rất lớn.
+            Do đó, chúng ta có dùng nó để fine tuning trên bài toán của chúng ta khi mà dataset của chúng ta chưa thật sự nhiều. Các pretrained
+            models ứng với nhiều network khác nhau được lưu trữ
+            <a href="https://drive.google.com/drive/folders/1BPEj09RyJuUxRlvhk1WXZeGeGB2UEVx9?usp=sharing">ở đây</a>. Bạn hãy download và chép vào thư mục
+            pretrained của bạn.
+        </p>
+        <h2 id="github">Github File Size Limit</h2>
+        <p>
+            Rất tiếc là Github không cho upload file có kích thước lớn hơn 100MB. Do vậy, nếu model file của bạn nhiều hơn 100MB, bạn hãy gọi sử dụng
+            <code>split_file.py </code> để cắt file thành những file nhỏ và vì thế sẽ commit lên Github được. Trong hàm load model, bạn hãy gọi hàm
+            <code>merge_file</code> trong <code>util</code> để merge file lại trước khi load model.
+        </p>
+        <h2 id="exam">Cách Chấm Điểm</h2>
+        <p>
+            Khi bài được submit lên, hệ thống sẽ khởi tạo đối tượng từ lớp <code><b>CatDetector</b></code>. Kế đó sẽ gọi hàm <code><b>load_model</b></code>.
+            Hệ thống sẽ load 1 bộ test bí mật và sẽ truyền vào hàm <code><b>predict</b></code> để get output từ model của bạn. Xem format output trong
+            code template ở repos của bạn.
+            Nếu output khớp với groundtruth thì bạn sẽ được điểm.
+            Good luck!
+
+        <hr />
+    </article>
+</main>
+</body>
+<script>
+    hljs.initHighlightingOnLoad();
+</script>
+</html>

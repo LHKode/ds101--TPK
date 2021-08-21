@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Final Project - Data Science 101</title>
+    <link rel="stylesheet" href="css/style.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.2/styles/solarized-dark.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.2/highlight.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.2/languages/python.min.js"></script>
+</head>
+<body id="top">
+<header>
+    <h1>Final Project</h1>
+    <p class="author">Data Science 101<br />October 2020
+    </p>
+</header>
+<div class="abstract">
+    <p>
+        Vào một ngày đẹp trời và trong lành, bạn đang thưởng thức món cơm gà ở NowZone và lắng nghe kênh nhạc yêu thích của mình.
+        Trong lúc ấy, chiếc điện thoại của bạn bỗng dưng báo có thư mới.
+        Lá thư rất ngắn gọn với dòng chữ "nhờ thám tử giúp" và cuối thư là dòng địa chỉ.
+    </p>
+</div>
+<main>
+    <article>
+        <h2 id="getting-started">Lời Mở Đầu</h2>
+        <p>
+            Vào một ngày đẹp trời và trong lành, bạn đang thưởng thức món cơm gà ở NowZone và lắng nghe kênh nhạc yêu thích của mình.
+            Trong lúc ấy, chiếc điện thoại của bạn bỗng dưng báo có thư mới.
+            Lá thư rất ngắn gọn với dòng chữ "nhờ thám tử giúp" và cuối thư là dòng địa chỉ của người gửi.
+            Bạn lần theo địa chỉ đến thì đó là một tòa biệt thự tráng lệ, và có vẻ mọi người đều biết bạn.
+            Họ lễ phép mời bạn vào. Không quá dài dòng, họ tóm tắt vấn đề rắc rối của họ cho thám tử biết.
+        </p>
+        <p>
+            Chuyện là ông chủ của tòa biệt thự đó vừa mới qua đời. Ông ấy dành cả đời để đi phượt
+            trên khắp mọi nẻo đường với nhiều phương tiện khác nhau: xe đạp cũng có, xe máy cũng có và xe hơi cũng có.
+            Tất cả chuyến đi của ông đều được ông ghi hình bằng chiếc camera hành trình của mình.
+            Tổng cộng có hơn 200 ngàn giờ ghi hình với nhiều độ phân giải khác nhau: 640x480, 1024x768, 1280x720, 1980x1080.
+            Trước khi qua đời, ông có nhắc tới một biển số xe. Ông nói hãy xem video có ghi hình biển số xe đó. Khúc quay đó
+            sẽ là chìa khóa mở ra kho báu mà ông cất giữ bấy lâu nay.
+        </p>
+        <p>
+            Họ bó tay vì không thể nào xem hết 200 ngàn giờ video ấy và họ biết chỉ có bạn mới có thể giúp họ tìm ra được kho báu.
+            Họ hứa sẽ chia sẻ một nửa kho báu nếu bạn giúp họ xác định những khung hình có chứa biển số ấy. Tuy nhiên, họ cũng là
+            người cẩn trọng. Họ không dám chia sẻ mớ video cho bạn, lại càng không nói biển số ấy là số gì.
+        </p>
+        <p>
+            Trước tiên, họ muốn bạn xác định tất cả các biển số xe có trong khung hình. Bạn phải xây dựng model để tự làm việc này
+            vì họ không muốn bạn nhìn thấy video đó. Model của bạn sẽ được đẩy vào server của họ trong một mạng lưới an ninh tuyệt đối
+            (chỉ có cho vô, không cho ra để đảm bảo video không bị đánh cắp ra ngoài). Model của bạn sẽ duyệt qua từng khung hình của
+            các video và xuất ra danh sách các biển số xe mà nó tìm được cũng như khung hình chữ nhật bao nhanh biển số đó. Sau đó,
+            họ sẽ lấy kết quả ấy, và đi search biển số xe họ cần tìm và tra được video chứa khung hình ấy.
+        </p>
+        <p>
+            Và bạn chỉ có 5 tuần để hoàn tất model. Cuối tuần thứ 1 họ sẽ chia sẻ 1 vài bức ảnh sample từ video của họ.
+            Cuối tuần thứ 3 họ sẽ mở hệ thống cho bạn test thử.
+            Bạn có thể thành lập 1 team tối đa 5 người (đã bao gồm bạn) để cùng nhau làm việc.
+        </p>
+        <h2 id="dataset">Dataset</h2>
+        <p>
+            Rất tiếc!!! Họ không có chia sẻ bất kì dataset nào cả. Bạn phải tự tìm kiếm dataset tương ứng (có khi bạn phải tự label).
+        </p>
+        <h2 id="models">Quy Định</h2>
+        <p>
+            Họ chỉ muốn trao phần thưởng cho người xứng đáng. Do đó, bạn hãy tự train model.
+            Bạn có thể tham khảo các phương pháp trên Internet, sử dụng mã nguồn mở, nhưng bạn phải tự train lại model.
+            Chưa chắc model của họ sẽ hoạt động tốt trên dữ liệu này đâu.
+        </p>
+        <h2 id="github">Github File Size Limit</h2>
+        <p>
+            Rất tiếc là Github không cho upload file có kích thước lớn hơn 100MB. Do vậy, nếu model file của bạn nhiều hơn 100MB, bạn hãy
+            cắt file thành những file nhỏ và vì thế sẽ commit lên Github được. Trong hàm load model, bạn hãy merge file lại trước khi load model.
+        </p>
+        <h2 id="help">Trợ Giúp</h2>
+        <p>
+            Bạn không bao giờ bị bỏ rơi một mình cả.
+            Bạn luôn có sự trợ giúp từ thầy cô, các trợ giảng và bạn bè.
+            Hãy chia sẻ những khó khăn vướng mắt của bạn ở channel <code>#project</code>.
+            Bạn cũng có thể chia sẻ ý tưởng, kinh nghiệm và sample code cho mọi người trên channel ấy.
+        </p>
+        <h2 id="exam">Cách Chấm Điểm</h2>
+        <p>
+            Khi bài được submit lên, hệ thống sẽ khởi tạo đối tượng từ lớp <code><b>PlateFinder</b></code> trong file
+            <code><b>plate_finder</b></code>. Kế đó sẽ gọi hàm <code><b>load_model</b></code>.
+            Hệ thống sẽ truyền một đối tượng PIL image vào hàm <code><b>predict</b></code> để get output từ model của bạn.
+            Bạn phải trả về 1 list. Mỗi item trong list là 1 tuple gồm 5 phần tử theo đúng thứ tự sau đây
+            <code>(xmin, ymin, xmax, ymax, plate_number)</code>.<br/>
+            Good luck!
+        <hr />
+    </article>
+</main>
+</body>
+<script>
+    hljs.initHighlightingOnLoad();
+</script>
+</html>
